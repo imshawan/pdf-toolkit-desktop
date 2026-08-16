@@ -13,7 +13,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   const { t } = useTranslation();
 
   return (
-    <aside className="flex flex-col w-[260px] h-full bg-transparent overflow-hidden" style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}>
+    <aside className="flex flex-col w-[220px] h-full bg-white/50 dark:bg-transparent overflow-hidden" style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}>
 
       {/* Header section with App Icon & Title */}
       <div className="flex items-center gap-3 px-4 pt-12 pb-0" style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}>
