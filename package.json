@@ -1,7 +1,8 @@
 {
   "name": "pdf-toolkit-desktop",
+  "displayName": "PDF Toolkit",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
