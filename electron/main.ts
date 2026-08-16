@@ -1,9 +1,8 @@
 import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron'
-import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import { savePdf, saveMultiplePdfs, selectSaveFile, selectFolder, savePdfExact, saveMultiplePdfsExact } from './ipc/app/handlers'
 
-const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // The built directory structure
@@ -26,10 +25,18 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 
 let win: BrowserWindow | null
 
-// Setup IPC for Theme syncing
-ipcMain.on('set-theme', (event, theme: 'light' | 'dark' | 'system') => {
-  nativeTheme.themeSource = theme;
-})
+function setupIpcHandlers() {
+  ipcMain.on('set-theme', (_event, theme: 'light' | 'dark' | 'system') => {
+    nativeTheme.themeSource = theme;
+  })
+
+  ipcMain.handle('file:save-pdf', savePdf);
+  ipcMain.handle('file:save-multiple-pdfs', saveMultiplePdfs);
+  ipcMain.handle('file:select-save-file', selectSaveFile);
+  ipcMain.handle('file:select-folder', selectFolder);
+  ipcMain.handle('file:save-pdf-exact', savePdfExact);
+  ipcMain.handle('file:save-multiple-pdfs-exact', saveMultiplePdfsExact);
+}
 
 function createWindow() {
   win = new BrowserWindow({
@@ -79,4 +86,8 @@ app.on('activate', () => {
   }
 })
 
-app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+  setupIpcHandlers();
+  createWindow();
+})
+

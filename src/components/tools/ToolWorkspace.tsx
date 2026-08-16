@@ -5,6 +5,7 @@ import { DropZone } from '../ui/DropZone';
 import { Button } from '../ui/Button';
 import { RotatePdfTool, RotatePdfToolRef } from './RotatePdfTool';
 import { MergePdfTool, MergePdfToolRef } from './MergePdfTool';
+import { SplitPdfTool, SplitPdfToolRef } from './SplitPdfTool';
 
 interface ToolWorkspaceProps {
   toolId: string;
@@ -18,6 +19,7 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
   
   const rotateToolRef = useRef<RotatePdfToolRef>(null);
   const mergeToolRef = useRef<MergePdfToolRef>(null);
+  const splitToolRef = useRef<SplitPdfToolRef>(null);
 
   const handleFilesDrop = (droppedFiles: File[]) => {
     // If tool doesn't support multiple files, replace instead of append
@@ -37,6 +39,8 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
       rotateToolRef.current.processAndDownload();
     } else if (toolId === 'merge' && mergeToolRef.current) {
       mergeToolRef.current.processAndDownload();
+    } else if (toolId === 'split' && splitToolRef.current) {
+      splitToolRef.current.processAndDownload();
     }
   };
 
@@ -109,6 +113,12 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
                 ref={mergeToolRef} 
                 files={files} 
                 setFiles={setFiles}
+                onProcessingChange={setIsProcessing} 
+              />
+            ) : toolId === 'split' ? (
+              <SplitPdfTool 
+                ref={splitToolRef} 
+                files={files} 
                 onProcessingChange={setIsProcessing} 
               />
             ) : (

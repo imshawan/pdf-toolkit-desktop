@@ -6,6 +6,7 @@ import { About } from '@/components/tabs/about';
 import { ToolWorkspace } from '@/components/tools/ToolWorkspace';
 import { useApp } from '@/hooks/useApp';
 import { useTranslation } from 'react-i18next';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -79,6 +80,17 @@ function App() {
 
   return (
     <AppLayout activeTab={activeTab} setActiveTab={handleTabChange}>
+      <Toaster 
+        position="bottom-center"
+        toastOptions={{
+          className: 'dark:bg-[#2C2C2E] dark:text-white',
+          style: {
+            borderRadius: '10px',
+            background: '#333',
+            color: '#fff',
+          },
+        }} 
+      />
       {renderContent()}
     </AppLayout>
   );
