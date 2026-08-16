@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { ChevronLeft, Trash2, Settings } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { ChevronLeft, Trash2, Settings, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { DropZone } from '../ui/DropZone';
 import { Button } from '../ui/Button';
+import { RotatePdfTool, RotatePdfToolRef } from './RotatePdfTool';
 
 interface ToolWorkspaceProps {
   toolId: string;
@@ -12,13 +13,27 @@ interface ToolWorkspaceProps {
 export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
   const { t } = useTranslation();
   const [files, setFiles] = useState<File[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  
+  const rotateToolRef = useRef<RotatePdfToolRef>(null);
 
   const handleFilesDrop = (droppedFiles: File[]) => {
-    setFiles(prev => [...prev, ...droppedFiles]);
+    // If tool doesn't support multiple files, replace instead of append
+    if (toolId !== 'merge' && toolId !== 'img2pdf' && files.length > 0) {
+      setFiles([droppedFiles[0]]);
+    } else {
+      setFiles(prev => [...prev, ...droppedFiles]);
+    }
   };
 
   const handleClear = () => {
     setFiles([]);
+  };
+
+  const handleProcess = () => {
+    if (toolId === 'rotate' && rotateToolRef.current) {
+      rotateToolRef.current.processAndDownload();
+    }
   };
 
   const titles: Record<string, string> = {
@@ -54,12 +69,12 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
         <div className="flex items-center gap-2">
           {files.length > 0 && (
             <>
-              <Button variant="secondary" onClick={handleClear}>
+              <Button variant="secondary" onClick={handleClear} disabled={isProcessing}>
                 <Trash2 size={14} />
                 {t('common.clearAll')}
               </Button>
-              <Button variant="primary">
-                <Settings size={14} />
+              <Button variant="primary" onClick={handleProcess} disabled={isProcessing}>
+                {isProcessing ? <Loader2 size={14} className="animate-spin" /> : <Settings size={14} />}
                 {t('common.processDownload')}
               </Button>
             </>
@@ -78,19 +93,27 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
             />
           </div>
         ) : (
-          <div className="flex-1 bg-black/[0.02] dark:bg-white/[0.02] rounded-2xl border border-black/5 dark:border-white/5 p-6 overflow-auto">
-            {/* Temporary Placeholder for File Previews */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {files.map((f, i) => (
-                <div key={i} className="bg-white dark:bg-[#252525] p-4 rounded-xl shadow-sm border border-black/5 dark:border-white/5 flex flex-col items-center text-center">
-                  <div className="w-16 h-20 bg-black/5 dark:bg-white/5 rounded-lg mb-3 flex items-center justify-center">
-                    <span className="text-[11px] text-black/40 dark:text-white/40">Preview</span>
+          <div className="flex-1 rounded-2xl border border-black/5 dark:border-white/5 p-1 overflow-hidden flex flex-col">
+            {toolId === 'rotate' ? (
+              <RotatePdfTool 
+                ref={rotateToolRef} 
+                files={files} 
+                onProcessingChange={setIsProcessing} 
+              />
+            ) : (
+              /* Temporary Placeholder for other File Previews */
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-5 bg-black/[0.02] dark:bg-white/[0.02] rounded-xl h-full overflow-auto">
+                {files.map((f, i) => (
+                  <div key={i} className="bg-white dark:bg-[#252525] p-4 rounded-xl shadow-sm border border-black/5 dark:border-white/5 flex flex-col items-center text-center h-fit">
+                    <div className="w-16 h-20 bg-black/5 dark:bg-white/5 rounded-lg mb-3 flex items-center justify-center">
+                      <span className="text-[11px] text-black/40 dark:text-white/40">Preview</span>
+                    </div>
+                    <span className="text-[13px] font-medium truncate w-full" title={f.name}>{f.name}</span>
+                    <span className="text-[11px] text-black/50 dark:text-white/50 mt-1">{(f.size / 1024 / 1024).toFixed(2)} MB</span>
                   </div>
-                  <span className="text-[13px] font-medium truncate w-full" title={f.name}>{f.name}</span>
-                  <span className="text-[11px] text-black/50 dark:text-white/50 mt-1">{(f.size / 1024 / 1024).toFixed(2)} MB</span>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
