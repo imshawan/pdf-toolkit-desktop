@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-mac-blue: #007aff;
+  --color-mac-blue-active: #0062cc;
+  --color-mac-bg-light: #f5f5f7;
+  --color-mac-bg-dark: #1e1e1e;
+  --color-mac-sidebar-light: rgba(245, 245, 247, 0.7);
+  --color-mac-sidebar-dark: rgba(30, 30, 30, 0.7);
+  --color-mac-border-light: rgba(0, 0, 0, 0.1);
+  --color-mac-border-dark: rgba(255, 255, 255, 0.1);
+  --color-mac-text-light: #1d1d1f;
+  --color-mac-text-dark: #f5f5f7;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: transparent;
+  color: var(--color-mac-text-light);
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Desktop apps often disable body scrolling */
+  user-select: none; /* Make it feel like an app */
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: transparent;
+    color: var(--color-mac-text-dark);
+  }
+}
+
+/* Glassmorphism utilities */
+.mac-glass {
+  background: var(--color-mac-sidebar-light);
+  backdrop-filter: blur(40px) saturate(150%);
+  -webkit-backdrop-filter: blur(40px) saturate(150%);
+  border-right: 1px solid var(--color-mac-border-light);
+}
+
+@media (prefers-color-scheme: dark) {
+  .mac-glass {
+    background: var(--color-mac-sidebar-dark);
+    border-right: 1px solid var(--color-mac-border-dark);
+  }
+}
+
+/* Custom Scrollbar for macOS feel */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+}
+
