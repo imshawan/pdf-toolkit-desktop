@@ -1,6 +1,24 @@
 import { PDFDocument, degrees } from 'pdf-lib';
 
 /**
+ * Merges multiple PDF files into a single PDF document.
+ * @param files Array of PDF Files to merge.
+ * @returns The merged PDF file as a Uint8Array.
+ */
+export async function mergePdfs(files: File[]): Promise<Uint8Array> {
+  const mergedPdf = await PDFDocument.create();
+  
+  for (const file of files) {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(arrayBuffer);
+    const copiedPages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+    copiedPages.forEach((page) => mergedPdf.addPage(page));
+  }
+  
+  return await mergedPdf.save();
+}
+
+/**
  * Rotates all pages in a PDF document by the specified angle.
  * @param pdfBytes The original PDF file as a Uint8Array.
  * @param angleDegrees The rotation angle in degrees (e.g., 90 for clockwise).

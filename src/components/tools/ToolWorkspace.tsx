@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { DropZone } from '../ui/DropZone';
 import { Button } from '../ui/Button';
 import { RotatePdfTool, RotatePdfToolRef } from './RotatePdfTool';
+import { MergePdfTool, MergePdfToolRef } from './MergePdfTool';
 
 interface ToolWorkspaceProps {
   toolId: string;
@@ -16,6 +17,7 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   
   const rotateToolRef = useRef<RotatePdfToolRef>(null);
+  const mergeToolRef = useRef<MergePdfToolRef>(null);
 
   const handleFilesDrop = (droppedFiles: File[]) => {
     // If tool doesn't support multiple files, replace instead of append
@@ -33,6 +35,8 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
   const handleProcess = () => {
     if (toolId === 'rotate' && rotateToolRef.current) {
       rotateToolRef.current.processAndDownload();
+    } else if (toolId === 'merge' && mergeToolRef.current) {
+      mergeToolRef.current.processAndDownload();
     }
   };
 
@@ -98,6 +102,13 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
               <RotatePdfTool 
                 ref={rotateToolRef} 
                 files={files} 
+                onProcessingChange={setIsProcessing} 
+              />
+            ) : toolId === 'merge' ? (
+              <MergePdfTool 
+                ref={mergeToolRef} 
+                files={files} 
+                setFiles={setFiles}
                 onProcessingChange={setIsProcessing} 
               />
             ) : (
