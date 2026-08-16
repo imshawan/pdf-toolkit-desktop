@@ -6,6 +6,7 @@ import { Button } from '../ui/Button';
 import { RotatePdfTool, RotatePdfToolRef } from './RotatePdfTool';
 import { MergePdfTool, MergePdfToolRef } from './MergePdfTool';
 import { SplitPdfTool, SplitPdfToolRef } from './SplitPdfTool';
+import { RearrangePdfTool, RearrangePdfToolRef } from './RearrangePdfTool';
 
 interface ToolWorkspaceProps {
   toolId: string;
@@ -20,6 +21,7 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
   const rotateToolRef = useRef<RotatePdfToolRef>(null);
   const mergeToolRef = useRef<MergePdfToolRef>(null);
   const splitToolRef = useRef<SplitPdfToolRef>(null);
+  const rearrangeToolRef = useRef<RearrangePdfToolRef>(null);
 
   const handleFilesDrop = (droppedFiles: File[]) => {
     // If tool doesn't support multiple files, replace instead of append
@@ -41,16 +43,18 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
       mergeToolRef.current.processAndDownload();
     } else if (toolId === 'split' && splitToolRef.current) {
       splitToolRef.current.processAndDownload();
+    } else if (toolId === 'rearrange' && rearrangeToolRef.current) {
+      rearrangeToolRef.current.processAndDownload();
     }
   };
 
   const titles: Record<string, string> = {
-    merge: t('tools.merge'),
-    split: t('tools.split'),
-    rotate: t('tools.rotate'),
-    img2pdf: t('tools.img2pdf'),
-    xls2pdf: t('tools.xls2pdf'),
-    rearrange: t('tools.rearrange'),
+    merge: t('tools.merge', 'Merge PDF'),
+    split: t('tools.split', 'Split PDF'),
+    rotate: t('tools.rotate', 'Rotate PDF'),
+    img2pdf: t('tools.img2pdf', 'Image to PDF'),
+    xls2pdf: t('tools.xls2pdf', 'Excel to PDF'),
+    rearrange: t('tools.rearrange', 'Rearrange Pages'),
   };
 
   return (
@@ -79,11 +83,11 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
             <>
               <Button variant="secondary" onClick={handleClear} disabled={isProcessing}>
                 <Trash2 size={14} />
-                {t('common.clearAll')}
+                {t('common.clearAll', 'Clear All')}
               </Button>
               <Button variant="primary" onClick={handleProcess} disabled={isProcessing}>
                 {isProcessing ? <Loader2 size={14} className="animate-spin" /> : <Settings size={14} />}
-                {t('common.processDownload')}
+                {t('common.processDownload', 'Process & Download')}
               </Button>
             </>
           )}
@@ -118,6 +122,12 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
             ) : toolId === 'split' ? (
               <SplitPdfTool 
                 ref={splitToolRef} 
+                files={files} 
+                onProcessingChange={setIsProcessing} 
+              />
+            ) : toolId === 'rearrange' ? (
+              <RearrangePdfTool 
+                ref={rearrangeToolRef} 
                 files={files} 
                 onProcessingChange={setIsProcessing} 
               />
