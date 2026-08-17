@@ -7,6 +7,7 @@ import { RotatePdfTool, RotatePdfToolRef } from './RotatePdfTool';
 import { MergePdfTool, MergePdfToolRef } from './MergePdfTool';
 import { SplitPdfTool, SplitPdfToolRef } from './SplitPdfTool';
 import { RearrangePdfTool, RearrangePdfToolRef } from './RearrangePdfTool';
+import { ImageToPdfTool, ImageToPdfToolRef } from './ImageToPdfTool';
 
 interface ToolWorkspaceProps {
   toolId: string;
@@ -22,6 +23,7 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
   const mergeToolRef = useRef<MergePdfToolRef>(null);
   const splitToolRef = useRef<SplitPdfToolRef>(null);
   const rearrangeToolRef = useRef<RearrangePdfToolRef>(null);
+  const img2pdfToolRef = useRef<ImageToPdfToolRef>(null);
 
   const handleFilesDrop = (droppedFiles: File[]) => {
     // If tool doesn't support multiple files, replace instead of append
@@ -45,6 +47,8 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
       splitToolRef.current.processAndDownload();
     } else if (toolId === 'rearrange' && rearrangeToolRef.current) {
       rearrangeToolRef.current.processAndDownload();
+    } else if (toolId === 'img2pdf' && img2pdfToolRef.current) {
+      img2pdfToolRef.current.processAndDownload();
     }
   };
 
@@ -129,6 +133,13 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
               <RearrangePdfTool 
                 ref={rearrangeToolRef} 
                 files={files} 
+                onProcessingChange={setIsProcessing} 
+              />
+            ) : toolId === 'img2pdf' ? (
+              <ImageToPdfTool 
+                ref={img2pdfToolRef} 
+                files={files} 
+                setFiles={setFiles}
                 onProcessingChange={setIsProcessing} 
               />
             ) : (
