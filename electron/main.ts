@@ -1,9 +1,13 @@
-import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron'
+import { app, BrowserWindow, ipcMain, nativeTheme, Menu, MenuItemConstructorOptions } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { savePdf, saveMultiplePdfs, selectSaveFile, selectFolder, savePdfExact, saveMultiplePdfsExact } from './ipc/app/handlers'
+import pkg from 'package.json'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+// Set the application name early so macOS uses it in the menu bar instead of "Electron"
+app.setName(pkg.displayName || pkg.name);
 
 // The built directory structure
 //
@@ -86,7 +90,115 @@ app.on('activate', () => {
   }
 })
 
+function setupMenu() {
+  const isMac = process.platform === 'darwin'
+  const appName = 'PDF Toolkit'
+
+  // Customize the About panel (works natively on macOS, and via app.showAboutPanel() on Win/Linux)
+  app.setAboutPanelOptions({
+    applicationName: appName,
+    applicationVersion: '1.0.0',
+    version: '1.0.0',
+    copyright: '© 2026 PDF Toolkit',
+    authors: ['Shawan Mandal'],
+    website: 'https://github.com/imshawan',
+    iconPath: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg') // Linux/Windows fallback icon
+  });
+
+  const template: MenuItemConstructorOptions[] = [
+    ...(isMac
+      ? [{
+          label: appName,
+          submenu: [
+            { role: 'about' },
+            { type: 'separator' },
+            { role: 'services' },
+            { type: 'separator' },
+            { role: 'hide' },
+            { role: 'hideOthers' },
+            { role: 'unhide' },
+            { type: 'separator' },
+            { role: 'quit' }
+          ]
+        }] as MenuItemConstructorOptions[]
+      : []),
+    {
+      label: 'File',
+      submenu: [
+        isMac ? { role: 'close' } : { role: 'quit' }
+      ]
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        ...(isMac
+          ? [
+              { role: 'pasteAndMatchStyle' },
+              { role: 'delete' },
+              { role: 'selectAll' }
+            ]
+          : [
+              { role: 'delete' },
+              { type: 'separator' },
+              { role: 'selectAll' }
+            ]) as MenuItemConstructorOptions[]
+      ]
+    },
+    {
+      label: 'View',
+      submenu: [
+        { role: 'reload' },
+        { role: 'forceReload' },
+        { role: 'toggleDevTools' },
+        { type: 'separator' },
+        { role: 'resetZoom' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' }
+      ]
+    },
+    {
+      label: 'Window',
+      submenu: [
+        { role: 'minimize' },
+        { role: 'zoom' },
+        ...(isMac
+          ? [
+              { type: 'separator' },
+              { role: 'front' }
+            ]
+          : [
+              { role: 'close' }
+            ]) as MenuItemConstructorOptions[]
+      ]
+    },
+    {
+      label: 'Help',
+      role: 'help',
+      submenu: [
+        {
+          label: `About ${appName}`,
+          click: () => {
+            app.showAboutPanel();
+          }
+        }
+      ]
+    }
+  ]
+
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
+}
+
 app.whenReady().then(() => {
+  setupMenu();
   setupIpcHandlers();
   createWindow();
 })
