@@ -24,7 +24,7 @@ export function Dashboard({ onToolSelect }: DashboardProps) {
   ];
 
   const convertTools = [
-    { id: 'img2pdf', icon: ImageIcon, label: t('tools.img2pdf'), desc: t('tools.img2pdfDesc'), iconBg: 'bg-purple-500' },
+    { id: 'img2pdf', icon: ImageIcon, label: t('tools.img2pdf'), desc: t('tools.img2pdfDesc'), iconBg: 'bg-blue-500' },
     { id: 'xls2pdf', icon: Table, label: t('tools.xls2pdf'), desc: t('tools.xls2pdfDesc'), iconBg: 'bg-pink-500' },
   ];
 

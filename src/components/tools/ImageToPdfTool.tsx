@@ -3,6 +3,7 @@ import { Image as ImageIcon, X, Plus, Eye } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { downloadPdf, selectFolder, downloadMultiplePdfsExact } from '../../lib/pdfUtils';
 import toast from 'react-hot-toast';
+import { Button } from '../ui/Button';
 
 import {
   DndContext,
@@ -128,7 +129,10 @@ export const ImageToPdfTool = forwardRef<ImageToPdfToolRef, ImageToPdfToolProps>
     // Load images with dimensions
     useEffect(() => {
       if (files.length === 0) {
-        setImages([]);
+        setImages((prev) => {
+          prev.forEach(img => URL.revokeObjectURL(img.previewUrl));
+          return [];
+        });
         return;
       }
 
@@ -260,7 +264,7 @@ export const ImageToPdfTool = forwardRef<ImageToPdfToolRef, ImageToPdfToolProps>
         <div className="w-[280px] flex flex-col border-r border-black/5 dark:border-white/5 bg-[#F9F9F9] dark:bg-[#202020] shrink-0">
           <div className="p-4 border-b border-black/5 dark:border-white/5 bg-[#F5F5F7] dark:bg-[#252525]">
             <h2 className="text-[14px] font-semibold text-black dark:text-white flex items-center gap-2">
-              <ImageIcon size={16} className="text-purple-500" />
+              <ImageIcon size={16} className="text-blue-500" />
               {t('tools.img2pdf', 'Image to PDF')}
             </h2>
           </div>
@@ -270,14 +274,17 @@ export const ImageToPdfTool = forwardRef<ImageToPdfToolRef, ImageToPdfToolProps>
               Drag and drop the image thumbnails on the right to reorder them. Each image becomes a page in the output PDF.
             </p>
 
-            {/* Preview Button */}
-            <button
-              onClick={() => setShowPreview(true)}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-purple-500 hover:bg-purple-600 text-white text-[13px] font-semibold transition-colors"
-            >
-              <Eye size={15} />
-              Preview PDF
-            </button>
+            {/* Actions */}
+            <div className="flex flex-col gap-2">
+              <Button
+                variant="primary"
+                onClick={() => setShowPreview(true)}
+                className="w-full py-2.5"
+              >
+                <Eye size={15} />
+                Preview PDF
+              </Button>
+            </div>
 
             {/* Output Filename + Save Location */}
             <div className="border-t border-black/5 dark:border-white/5 pt-4">
@@ -353,7 +360,7 @@ export const ImageToPdfTool = forwardRef<ImageToPdfToolRef, ImageToPdfToolProps>
                 {/* Add more card */}
                 <button
                   onClick={handleAddMore}
-                  className="flex flex-col items-center justify-center gap-2 aspect-square rounded-lg border-2 border-dashed border-black/10 dark:border-white/10 hover:border-purple-400 dark:hover:border-purple-400 hover:bg-purple-500/5 transition-colors cursor-pointer"
+                  className="flex flex-col items-center justify-center gap-2 aspect-square rounded-lg border-2 border-dashed border-black/10 dark:border-white/10 hover:border-blue-400 dark:hover:border-blue-400 hover:bg-blue-500/5 transition-colors cursor-pointer"
                 >
                   <Plus size={24} className="text-black/30 dark:text-white/30" />
                   <span className="text-[11px] font-medium text-black/40 dark:text-white/40">Add Images</span>
@@ -470,12 +477,13 @@ export const ImageToPdfTool = forwardRef<ImageToPdfToolRef, ImageToPdfToolProps>
               </div>
 
               <div className="p-4 border-t border-black/5 dark:border-white/5">
-                <button
+                <Button
+                  variant="primary"
                   onClick={() => setShowPreview(false)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-purple-500 hover:bg-purple-600 text-white text-[13px] font-semibold transition-colors"
+                  className="w-full py-2.5"
                 >
                   Done
-                </button>
+                </Button>
               </div>
             </div>
 

@@ -44,8 +44,8 @@ function setupIpcHandlers() {
 
 function createWindow() {
   win = new BrowserWindow({
-    width: 900,
-    height: 600,
+    width: 1000,
+    height: 700,
     minWidth: 800,
     minHeight: 500,
     titleBarStyle: 'hiddenInset',

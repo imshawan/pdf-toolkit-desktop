@@ -85,11 +85,15 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
         <div className="flex items-center gap-2">
           {files.length > 0 && (
             <>
-              <Button variant="secondary" onClick={handleClear} disabled={isProcessing}>
+              <Button variant="secondary" onClick={handleClear} disabled={isProcessing}
+                className="w-48 py-2 !bg-black/5 dark:!bg-white/5 hover:!bg-red-500/10 hover:!text-red-500 !border-transparent text-black/60 dark:text-white/60"
+              >
                 <Trash2 size={14} />
                 {t('common.clearAll', 'Clear All')}
               </Button>
-              <Button variant="primary" onClick={handleProcess} disabled={isProcessing}>
+              <Button variant="primary" onClick={handleProcess} disabled={isProcessing}
+                className="w-48 py-2"
+              >
                 {isProcessing ? <Loader2 size={14} className="animate-spin" /> : <Settings size={14} />}
                 {t('common.processDownload', 'Process & Download')}
               </Button>
