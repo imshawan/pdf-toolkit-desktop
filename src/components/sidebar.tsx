@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutGrid, Settings, HelpCircle, User } from 'lucide-react';
+import { LayoutGrid, Settings, HelpCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { AppHeader } from './app-header';
 import { NavButton } from './nav-button';

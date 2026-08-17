@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useState, useEffect } from 'react';
+import { forwardRef, useImperativeHandle, useState, useEffect } from 'react';
 import { Merge, ArrowUp, ArrowDown, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { mergePdfs, downloadPdf, selectFolder, downloadMultiplePdfsExact } from '../../lib/pdfUtils';
