@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain, nativeTheme, Menu, MenuItemConstructorOpti
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { savePdf, saveMultiplePdfs, selectSaveFile, selectFolder, savePdfExact, saveMultiplePdfsExact } from './ipc/app/handlers'
-import pkg from 'package.json'
+import pkg from '../package.json'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
