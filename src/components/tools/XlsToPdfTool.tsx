@@ -371,67 +371,88 @@ export const XlsToPdfTool = forwardRef<XlsToPdfToolRef, XlsToPdfToolProps>(
 
         {/* Right Pane: Selected Files & Sheets List */}
         <div className="flex-1 bg-[#F0F0F2] dark:bg-[#1E1E1E] p-6 overflow-y-auto">
-          <div className="max-w-3xl mx-auto space-y-4">
+          <div className="max-w-6xl mx-auto space-y-6">
             {files.map((file, index) => {
               const fileId = (file as any).path || file.name;
               const isParsing = parsingFiles.has(fileId);
               const sheets = parsedSheets[fileId] || [];
-              const isExpanded = expandedFiles.has(fileId);
               const selectedSet = selectedSheets[fileId] || new Set();
 
               return (
-                <div key={fileId} className="bg-white dark:bg-[#2C2C2E] rounded-xl border border-black/10 dark:border-white/10 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                  {/* File Header */}
-                  <div className="flex items-center justify-between p-4 bg-[#F9F9F9] dark:bg-[#252525]">
-                    <div 
-                      className="flex items-center gap-3 cursor-pointer flex-1"
-                      onClick={() => toggleFileExpand(fileId)}
-                    >
-                      <button className="text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors">
-                        {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-                      </button>
-                      <div className="w-10 h-10 bg-pink-500/10 rounded-lg flex items-center justify-center text-pink-500 shrink-0">
-                        <FileSpreadsheet size={20} />
+                <div key={fileId} className="bg-white dark:bg-[#2C2C2E] rounded-2xl border border-black/5 dark:border-white/5 overflow-hidden shadow-sm flex flex-col">
+                  {/* File Header Banner */}
+                  <div className="p-5 border-b border-black/5 dark:border-white/5 bg-gradient-to-r from-[#F9F9F9] to-white dark:from-[#252525] dark:to-[#2C2C2E] flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500 shadow-inner">
+                        <FileSpreadsheet size={24} />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[14px] font-semibold text-black dark:text-white truncate" title={file.name}>
-                          {file.name}
-                        </p>
-                        <p className="text-[12px] text-black/50 dark:text-white/50">
-                          {isParsing ? 'Parsing sheets...' : `${sheets.length} sheets found • ${selectedSet.size} selected`}
-                        </p>
+                      <div>
+                         <h3 className="text-[15px] font-semibold text-black dark:text-white">{file.name}</h3>
+                         <p className="text-[13px] text-black/50 dark:text-white/50 mt-0.5">
+                           {isParsing ? 'Inspecting workbook...' : `${selectedSet.size} of ${sheets.length} sheets selected`}
+                         </p>
                       </div>
                     </div>
                     
                     <button
                       onClick={() => removeFile(index)}
-                      className="p-2 text-black/40 dark:text-white/40 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-colors ml-4"
+                      className="p-2.5 text-black/40 dark:text-white/40 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-colors"
+                      title="Remove file"
                     >
-                      <X size={18} />
+                      <X size={20} />
                     </button>
                   </div>
 
-                  {/* Sheets Checklist */}
-                  {isExpanded && !isParsing && sheets.length > 0 && (
-                    <div className="border-t border-black/5 dark:border-white/5 p-4 bg-white dark:bg-[#2C2C2E] grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {sheets.map(sheet => (
-                        <div 
-                          key={sheet.id}
-                          className="flex items-center gap-3 p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer group transition-colors"
-                          onClick={() => toggleSheet(fileId, sheet.name)}
-                        >
-                          <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${
-                            selectedSet.has(sheet.name)
-                              ? 'bg-blue-500 border-blue-500 text-white' 
-                              : 'border-black/20 dark:border-white/20 group-hover:border-blue-500/50'
-                          }`}>
-                            {selectedSet.has(sheet.name) && <Check size={14} strokeWidth={3} />}
-                          </div>
-                          <span className="text-[13px] text-black/80 dark:text-white/80 font-medium truncate" title={sheet.name}>
-                            {sheet.name}
-                          </span>
-                        </div>
-                      ))}
+                  {/* Sheet Gallery Grid Container */}
+                  {!isParsing && sheets.length > 0 && (
+                    <div className="p-6 bg-white dark:bg-[#2C2C2E]">
+                      <div 
+                        className="grid gap-4"
+                        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))' }}
+                      >
+                        {sheets.map((sheet, idx) => {
+                          const isSelected = selectedSet.has(sheet.name);
+                          return (
+                            <div
+                              key={sheet.id}
+                              onClick={() => toggleSheet(fileId, sheet.name)}
+                              className={`
+                                relative flex items-center gap-4 p-[14px] rounded-[14px] cursor-pointer transition-all duration-200 h-[84px]
+                                ${isSelected 
+                                  ? 'bg-[#0071e3]/5 dark:bg-[#0071e3]/10 border-2 border-[#0071e3]' 
+                                  : 'bg-[#F9F9F9] dark:bg-[#333333] border-2 border-black/5 dark:border-white/5 hover:border-black/15 dark:hover:border-white/15'
+                                }
+                              `}
+                            >
+                              {/* Icon */}
+                              <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${
+                                isSelected ? 'bg-[#0071e3]/10 text-[#0071e3]' : 'bg-black/5 dark:bg-white/5 text-black/50 dark:text-white/50'
+                              }`}>
+                                <Table size={20} strokeWidth={2} />
+                              </div>
+                  
+                              {/* Sheet Info */}
+                              <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                <span className="text-[14px] leading-snug font-semibold text-black dark:text-white line-clamp-2" title={sheet.name}>
+                                  {sheet.name}
+                                </span>
+                                <span className={`text-[12px] font-medium mt-0.5 ${
+                                  isSelected ? 'text-[#0071e3]/80' : 'text-black/40 dark:text-white/40'
+                                }`}>
+                                  Sheet {idx + 1}
+                                </span>
+                              </div>
+
+                              {/* Checkbox */}
+                              <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-colors ${
+                                isSelected ? 'bg-[#0071e3] text-white' : 'border-2 border-black/10 dark:border-white/10'
+                              }`}>
+                                {isSelected && <Check size={14} strokeWidth={3} />}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
                 </div>
