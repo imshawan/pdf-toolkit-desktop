@@ -1,5 +1,5 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { RotateCcw, RotateCw } from 'lucide-react';
+import { RotateCcw, RotateCw, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { Button } from '../ui/Button';
@@ -21,6 +21,7 @@ export const RotatePdfTool = forwardRef<RotatePdfToolRef, RotatePdfToolProps>(({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [rotationDegrees, setRotationDegrees] = useState<number>(0);
   const [isProcessingLocal, setIsProcessingLocal] = useState(false);
+  const [isIframeLoading, setIsIframeLoading] = useState(false);
   const [saveLocation, setSaveLocation] = useState<'original' | 'custom'>('original');
   const [customLocationPath, setCustomLocationPath] = useState<string>('');
   const [outputFilename, setOutputFilename] = useState<string>('');
@@ -55,6 +56,7 @@ export const RotatePdfTool = forwardRef<RotatePdfToolRef, RotatePdfToolProps>(({
     
     const generatePreview = async () => {
       setIsProcessingLocal(true);
+      setIsIframeLoading(true);
       onProcessingChange?.(true);
       
       try {
@@ -155,22 +157,20 @@ export const RotatePdfTool = forwardRef<RotatePdfToolRef, RotatePdfToolProps>(({
               {t('tools.rotationDirection', 'Rotation Direction')}
             </label>
             <div className="flex gap-3">
-              <Button 
-                variant="secondary" 
-                className="flex-1 py-4 flex flex-col gap-2 items-center justify-center bg-white dark:bg-[#2C2C2E] border-black/10 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200"
+              <button 
+                className="flex-1 py-3 px-4 rounded-full flex items-center justify-center gap-2 bg-[#0071e3]/10 text-[#0071e3] font-medium text-[13px] hover:bg-[#0071e3] hover:text-white transition-all duration-200"
                 onClick={() => setRotationDegrees(prev => (prev - 90) % 360)}
               >
-                <RotateCcw size={20} />
-                <span className="text-[12px]">{t('tools.left', 'Left')}</span>
-              </Button>
-              <Button 
-                variant="secondary" 
-                className="flex-1 py-4 flex flex-col gap-2 items-center justify-center bg-white dark:bg-[#2C2C2E] border-black/10 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200"
+                <RotateCcw size={16} strokeWidth={2.5} />
+                <span>{t('tools.left', 'Left')}</span>
+              </button>
+              <button 
+                className="flex-1 py-3 px-4 rounded-full flex items-center justify-center gap-2 bg-[#0071e3]/10 text-[#0071e3] font-medium text-[13px] hover:bg-[#0071e3] hover:text-white transition-all duration-200"
                 onClick={() => setRotationDegrees(prev => (prev + 90) % 360)}
               >
-                <RotateCw size={20} />
-                <span className="text-[12px]">{t('tools.right', 'Right')}</span>
-              </Button>
+                <RotateCw size={16} strokeWidth={2.5} />
+                <span>{t('tools.right', 'Right')}</span>
+              </button>
             </div>
             {rotationDegrees !== 0 && (
               <p className="text-[12px] text-blue-600 dark:text-blue-400 mt-3 text-center font-medium">
@@ -235,17 +235,20 @@ export const RotatePdfTool = forwardRef<RotatePdfToolRef, RotatePdfToolProps>(({
 
       {/* Right Pane: Live Preview */}
       <div className="flex-1 bg-black/5 dark:bg-black/20 p-4 relative">
-        {isProcessingLocal && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 dark:bg-black/50 backdrop-blur-sm">
-            <span className="text-sm font-medium animate-pulse">Rotating preview...</span>
+        {(isProcessingLocal || isIframeLoading) && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 dark:bg-black/50 backdrop-blur-sm transition-opacity duration-200">
+            <div className="bg-white dark:bg-[#252525] p-5 rounded-2xl shadow-xl flex flex-col items-center gap-3">
+              <Loader2 size={28} className="animate-spin text-[#0071e3]" />
+              <span className="text-[13px] font-medium text-black/70 dark:text-white/70">Generating preview...</span>
+            </div>
           </div>
         )}
         
         {previewUrl ? (
-          <embed 
+          <iframe 
             src={`${previewUrl}#toolbar=0&navpanes=0&scrollbar=0`} 
-            type="application/pdf" 
-            className="w-full h-full rounded-xl shadow-md bg-white border border-black/10 dark:border-white/10" 
+            className={`w-full h-full rounded-xl shadow-md bg-white border border-black/10 dark:border-white/10 transition-opacity duration-300 ${isIframeLoading ? 'opacity-0' : 'opacity-100'}`} 
+            onLoad={() => setTimeout(() => setIsIframeLoading(false), 1500)}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">

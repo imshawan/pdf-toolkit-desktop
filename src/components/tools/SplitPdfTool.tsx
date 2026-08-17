@@ -1,5 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useState, useEffect, useRef } from 'react';
-import { Scissors } from 'lucide-react';
+import { Scissors, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { PDFDocument } from 'pdf-lib';
 import { splitPdf, downloadMultiplePdfs, selectFolder, downloadMultiplePdfsExact } from '../../lib/pdfUtils';
@@ -50,11 +50,11 @@ export const SplitPdfTool = forwardRef<SplitPdfToolRef, SplitPdfToolProps>(({ fi
   const { t } = useTranslation();
   
   const [originalBytes, setOriginalBytes] = useState<Uint8Array | null>(null);
-  const [extractedPdfs, setExtractedPdfs] = useState<Uint8Array[]>([]);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [pageCount, setPageCount] = useState<number>(0);
   const [rangeInput, setRangeInput] = useState<string>('');
   const [isProcessingLocal, setIsProcessingLocal] = useState(false);
+  const [isIframeLoading, setIsIframeLoading] = useState(false);
   const [saveLocation, setSaveLocation] = useState<'original' | 'custom'>('original');
   const [customLocationPath, setCustomLocationPath] = useState<string>('');
   const [saveInNewFolder, setSaveInNewFolder] = useState(false);
@@ -76,7 +76,6 @@ export const SplitPdfTool = forwardRef<SplitPdfToolRef, SplitPdfToolProps>(({ fi
         if (e.target?.result && isMounted) {
           const bytes = new Uint8Array(e.target.result as ArrayBuffer);
           setOriginalBytes(bytes);
-          setExtractedPdfs([bytes]);
           
           try {
             const pdfDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
@@ -124,6 +123,7 @@ export const SplitPdfTool = forwardRef<SplitPdfToolRef, SplitPdfToolProps>(({ fi
     if (!originalBytes || pageCount === 0) return;
     
     setIsProcessingLocal(true);
+    setIsIframeLoading(true);
     onProcessingChange?.(true);
     
     try {
@@ -131,7 +131,6 @@ export const SplitPdfTool = forwardRef<SplitPdfToolRef, SplitPdfToolProps>(({ fi
       
       if (ranges.length === 0) {
         // If empty or invalid, show the original
-        setExtractedPdfs([originalBytes]);
         const blob = new Blob([originalBytes as any], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
         setPreviewUrl(prev => {
@@ -140,7 +139,6 @@ export const SplitPdfTool = forwardRef<SplitPdfToolRef, SplitPdfToolProps>(({ fi
         });
       } else {
         const newBytesArr = await splitPdf(originalBytes, ranges);
-        setExtractedPdfs(newBytesArr);
         const blob = new Blob([newBytesArr[0] as any], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
         setPreviewUrl(prev => {
@@ -338,17 +336,20 @@ export const SplitPdfTool = forwardRef<SplitPdfToolRef, SplitPdfToolProps>(({ fi
 
       {/* Right Pane: Live Preview */}
       <div className="flex-1 bg-black/5 dark:bg-black/20 p-4 relative">
-        {isProcessingLocal && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 dark:bg-black/50 backdrop-blur-sm">
-            <span className="text-sm font-medium animate-pulse">Generating preview...</span>
+        {(isProcessingLocal || isIframeLoading) && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 dark:bg-black/50 backdrop-blur-sm transition-opacity duration-200">
+            <div className="bg-white dark:bg-[#252525] p-5 rounded-2xl shadow-xl flex flex-col items-center gap-3">
+              <Loader2 size={28} className="animate-spin text-[#0071e3]" />
+              <span className="text-[13px] font-medium text-black/70 dark:text-white/70">Generating preview...</span>
+            </div>
           </div>
         )}
         
         {previewUrl ? (
-          <embed 
+          <iframe 
             src={`${previewUrl}#toolbar=0&navpanes=0&scrollbar=0`} 
-            type="application/pdf" 
-            className="w-full h-full rounded-xl shadow-md bg-white border border-black/10 dark:border-white/10" 
+            className={`w-full h-full rounded-xl shadow-md bg-white border border-black/10 dark:border-white/10 transition-opacity duration-300 ${isIframeLoading ? 'opacity-0' : 'opacity-100'}`} 
+            onLoad={() => setTimeout(() => setIsIframeLoading(false), 1500)}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">

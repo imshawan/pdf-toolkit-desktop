@@ -1,5 +1,5 @@
 import { forwardRef, useImperativeHandle, useState, useEffect } from 'react';
-import { Merge, ArrowUp, ArrowDown, X } from 'lucide-react';
+import { Merge, ArrowUp, ArrowDown, X, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { mergePdfs, downloadPdf, selectFolder, downloadMultiplePdfsExact } from '../../lib/pdfUtils';
 import toast from 'react-hot-toast';
@@ -20,6 +20,7 @@ export const MergePdfTool = forwardRef<MergePdfToolRef, MergePdfToolProps>(({ fi
   const [mergedBytes, setMergedBytes] = useState<Uint8Array | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isProcessingLocal, setIsProcessingLocal] = useState(false);
+  const [isIframeLoading, setIsIframeLoading] = useState(false);
   const [saveLocation, setSaveLocation] = useState<'original' | 'custom'>('original');
   const [customLocationPath, setCustomLocationPath] = useState<string>('');
   const [outputFilename, setOutputFilename] = useState<string>('merged_document.pdf');
@@ -32,6 +33,7 @@ export const MergePdfTool = forwardRef<MergePdfToolRef, MergePdfToolProps>(({ fi
       if (files.length === 0) return;
       
       setIsProcessingLocal(true);
+      setIsIframeLoading(true);
       onProcessingChange?.(true);
       
       try {
@@ -241,17 +243,20 @@ export const MergePdfTool = forwardRef<MergePdfToolRef, MergePdfToolProps>(({ fi
 
       {/* Right Pane: Live Preview */}
       <div className="flex-1 bg-black/5 dark:bg-black/20 p-4 relative">
-        {isProcessingLocal && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 dark:bg-black/50 backdrop-blur-sm">
-            <span className="text-sm font-medium animate-pulse">Generating preview...</span>
+        {(isProcessingLocal || isIframeLoading) && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 dark:bg-black/50 backdrop-blur-sm transition-opacity duration-200">
+            <div className="bg-white dark:bg-[#252525] p-5 rounded-2xl shadow-xl flex flex-col items-center gap-3">
+              <Loader2 size={28} className="animate-spin text-[#0071e3]" />
+              <span className="text-[13px] font-medium text-black/70 dark:text-white/70">Generating preview...</span>
+            </div>
           </div>
         )}
         
         {previewUrl ? (
-          <embed 
+          <iframe 
             src={`${previewUrl}#toolbar=0&navpanes=0&scrollbar=0`} 
-            type="application/pdf" 
-            className="w-full h-full rounded-xl shadow-md bg-white border border-black/10 dark:border-white/10" 
+            className={`w-full h-full rounded-xl shadow-md bg-white border border-black/10 dark:border-white/10 transition-opacity duration-300 ${isIframeLoading ? 'opacity-0' : 'opacity-100'}`} 
+            onLoad={() => setTimeout(() => setIsIframeLoading(false), 1500)}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
