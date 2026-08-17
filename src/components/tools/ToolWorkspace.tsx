@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { ChevronLeft, Trash2, Settings, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { DropZone } from '../ui/DropZone';
@@ -8,6 +8,7 @@ import { MergePdfTool, MergePdfToolRef } from './MergePdfTool';
 import { SplitPdfTool, SplitPdfToolRef } from './SplitPdfTool';
 import { RearrangePdfTool, RearrangePdfToolRef } from './RearrangePdfTool';
 import { ImageToPdfTool, ImageToPdfToolRef } from './ImageToPdfTool';
+import { XlsToPdfTool, XlsToPdfToolRef } from './XlsToPdfTool';
 
 interface ToolWorkspaceProps {
   toolId: string;
@@ -24,6 +25,7 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
   const splitToolRef = useRef<SplitPdfToolRef>(null);
   const rearrangeToolRef = useRef<RearrangePdfToolRef>(null);
   const img2pdfToolRef = useRef<ImageToPdfToolRef>(null);
+  const xls2pdfToolRef = useRef<XlsToPdfToolRef>(null);
 
   const handleFilesDrop = (droppedFiles: File[]) => {
     // If tool doesn't support multiple files, replace instead of append
@@ -49,6 +51,8 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
       rearrangeToolRef.current.processAndDownload();
     } else if (toolId === 'img2pdf' && img2pdfToolRef.current) {
       img2pdfToolRef.current.processAndDownload();
+    } else if (toolId === 'xls2pdf' && xls2pdfToolRef.current) {
+      xls2pdfToolRef.current.processAndDownload();
     }
   };
 
@@ -145,6 +149,13 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
                 files={files} 
                 setFiles={setFiles}
                 onProcessingChange={setIsProcessing} 
+              />
+            ) : toolId === 'xls2pdf' ? (
+              <XlsToPdfTool
+                ref={xls2pdfToolRef}
+                files={files}
+                setFiles={setFiles}
+                onProcessingChange={setIsProcessing}
               />
             ) : (
               /* Temporary Placeholder for other File Previews */
