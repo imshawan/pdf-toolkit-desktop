@@ -7,7 +7,8 @@ import {
   Image as ImageIcon, 
   Table, 
   GripHorizontal,
-  Lock
+  Lock,
+  Unlock
 } from 'lucide-react';
 
 interface DashboardProps {
@@ -23,6 +24,7 @@ export function Dashboard({ onToolSelect }: DashboardProps) {
     { id: 'rotate', icon: RotateCcw, label: t('tools.rotate', 'Rotate'), desc: t('tools.rotateDesc', 'Rotate PDF pages'), iconBg: 'bg-emerald-500' },
     { id: 'rearrange', icon: GripHorizontal, label: t('tools.rearrange', 'Rearrange'), desc: t('tools.rearrangeDesc', 'Reorder pages'), iconBg: 'bg-cyan-500' },
     { id: 'protect', icon: Lock, label: t('tools.protect', 'Protect'), desc: t('tools.protectDesc', 'Add a password to protect your PDF'), iconBg: 'bg-indigo-500' },
+    { id: 'unlock', icon: Unlock, label: t('tools.unlock', 'Unlock'), desc: t('tools.unlockDesc', 'Remove password from a PDF'), iconBg: 'bg-teal-500' },
   ];
 
   const convertTools = [

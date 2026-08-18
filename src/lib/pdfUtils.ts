@@ -218,10 +218,38 @@ export async function protectPdf(pdfBytes: Uint8Array, password: string): Promis
   const exitCode = qpdf.callMain(['--encrypt', password, password, '256', '--', 'input.pdf', 'output.pdf']);
 
   if (exitCode !== 0) {
-    throw new Error(`Failed to encrypt PDF (exit code ${exitCode})`);
+    throw new Error('Failed to encrypt PDF.');
   }
 
   // Read the encrypted file back from virtual filesystem
   const protectedPdfBytes = qpdf.FS.readFile('output.pdf');
   return protectedPdfBytes;
+}
+
+/**
+ * Removes password protection from a PDF document.
+ * @param pdfBytes The encrypted PDF file as a Uint8Array.
+ * @param password The current password required to open the PDF.
+ * @returns The decrypted, unprotected PDF file as a Uint8Array.
+ */
+export async function unlockPdf(pdfBytes: Uint8Array, password: string): Promise<Uint8Array> {
+  const qpdf = await QPDF({
+    locateFile: (path: string) => {
+      if (path.endsWith('.wasm')) return qpdfWasmUrl;
+      return path;
+    }
+  });
+
+  // Write to virtual filesystem
+  qpdf.FS.writeFile('input.pdf', pdfBytes);
+
+  // Run qpdf to decrypt
+  const exitCode = qpdf.callMain(['--decrypt', `--password=${password}`, 'input.pdf', 'output.pdf']);
+
+  if (exitCode !== 0) {
+    throw new Error('Failed to unlock PDF. The password might be incorrect.');
+  }
+
+  // Read the decrypted file back
+  return qpdf.FS.readFile('output.pdf');
 }
