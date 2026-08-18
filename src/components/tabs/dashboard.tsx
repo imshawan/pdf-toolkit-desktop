@@ -6,7 +6,8 @@ import {
   RotateCcw, 
   Image as ImageIcon, 
   Table, 
-  GripHorizontal 
+  GripHorizontal,
+  Lock
 } from 'lucide-react';
 
 interface DashboardProps {
@@ -19,8 +20,9 @@ export function Dashboard({ onToolSelect }: DashboardProps) {
   const coreTools = [
     { id: 'merge', icon: FileBox, label: t('tools.merge'), desc: t('tools.mergeDesc'), iconBg: 'bg-blue-500' },
     { id: 'split', icon: Scissors, label: t('tools.split'), desc: t('tools.splitDesc'), iconBg: 'bg-orange-500' },
-    { id: 'rotate', icon: RotateCcw, label: t('tools.rotate'), desc: t('tools.rotateDesc'), iconBg: 'bg-emerald-500' },
-    { id: 'rearrange', icon: GripHorizontal, label: t('tools.rearrange'), desc: t('tools.rearrangeDesc'), iconBg: 'bg-cyan-500' },
+    { id: 'rotate', icon: RotateCcw, label: t('tools.rotate', 'Rotate'), desc: t('tools.rotateDesc', 'Rotate PDF pages'), iconBg: 'bg-emerald-500' },
+    { id: 'rearrange', icon: GripHorizontal, label: t('tools.rearrange', 'Rearrange'), desc: t('tools.rearrangeDesc', 'Reorder pages'), iconBg: 'bg-cyan-500' },
+    { id: 'protect', icon: Lock, label: t('tools.protect', 'Protect'), desc: t('tools.protectDesc', 'Add a password to protect your PDF'), iconBg: 'bg-indigo-500' },
   ];
 
   const convertTools = [

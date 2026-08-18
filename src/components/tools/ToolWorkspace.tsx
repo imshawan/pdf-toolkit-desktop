@@ -9,6 +9,7 @@ import { SplitPdfTool, SplitPdfToolRef } from './SplitPdfTool';
 import { RearrangePdfTool, RearrangePdfToolRef } from './RearrangePdfTool';
 import { ImageToPdfTool, ImageToPdfToolRef } from './ImageToPdfTool';
 import { XlsToPdfTool, XlsToPdfToolRef } from './XlsToPdfTool';
+import { ProtectPdfTool, ProtectPdfToolRef } from './ProtectPdfTool';
 
 interface ToolWorkspaceProps {
   toolId: string;
@@ -26,6 +27,7 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
   const rearrangeToolRef = useRef<RearrangePdfToolRef>(null);
   const img2pdfToolRef = useRef<ImageToPdfToolRef>(null);
   const xls2pdfToolRef = useRef<XlsToPdfToolRef>(null);
+  const protectToolRef = useRef<ProtectPdfToolRef>(null);
 
   const handleFilesDrop = (droppedFiles: File[]) => {
     // If tool doesn't support multiple files, replace instead of append
@@ -53,6 +55,8 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
       img2pdfToolRef.current.processAndDownload();
     } else if (toolId === 'xls2pdf' && xls2pdfToolRef.current) {
       xls2pdfToolRef.current.processAndDownload();
+    } else if (toolId === 'protect' && protectToolRef.current) {
+      protectToolRef.current.processAndDownload();
     }
   };
 
@@ -63,6 +67,7 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
     img2pdf: t('tools.img2pdf', 'Image to PDF'),
     xls2pdf: t('tools.xls2pdf', 'Excel to PDF'),
     rearrange: t('tools.rearrange', 'Rearrange Pages'),
+    protect: t('tools.protect', 'Protect PDF'),
   };
 
   return (
@@ -155,6 +160,12 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
                 ref={xls2pdfToolRef}
                 files={files}
                 setFiles={setFiles}
+                onProcessingChange={setIsProcessing}
+              />
+            ) : toolId === 'protect' ? (
+              <ProtectPdfTool
+                ref={protectToolRef}
+                files={files}
                 onProcessingChange={setIsProcessing}
               />
             ) : (

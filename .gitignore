@@ -143,3 +143,4 @@ package-lock.json
 .vite
 .tanstack
 .idea
+.DS_Store

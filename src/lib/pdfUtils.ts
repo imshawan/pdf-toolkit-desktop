@@ -1,4 +1,6 @@
 import { PDFDocument, degrees } from 'pdf-lib';
+import QPDF from '../lib/qpdf/qpdf.js';
+import qpdfWasmUrl from '../lib/qpdf/qpdf.wasm?url';
 
 /**
  * Merges multiple PDF files into a single PDF document.
@@ -7,14 +9,14 @@ import { PDFDocument, degrees } from 'pdf-lib';
  */
 export async function mergePdfs(files: File[]): Promise<Uint8Array> {
   const mergedPdf = await PDFDocument.create();
-  
+
   for (const file of files) {
     const arrayBuffer = await file.arrayBuffer();
     const pdfDoc = await PDFDocument.load(arrayBuffer);
     const copiedPages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
     copiedPages.forEach((page) => mergedPdf.addPage(page));
   }
-  
+
   return await mergedPdf.save();
 }
 
@@ -27,15 +29,15 @@ export async function mergePdfs(files: File[]): Promise<Uint8Array> {
 export async function extractPdfPages(pdfBytes: Uint8Array, pageIndices: number[]): Promise<Uint8Array> {
   const originalPdf = await PDFDocument.load(pdfBytes);
   const newPdf = await PDFDocument.create();
-  
+
   // Validate indices exist before copying
   const validIndices = pageIndices.filter(i => i >= 0 && i < originalPdf.getPageCount());
-  
+
   if (validIndices.length > 0) {
     const copiedPages = await newPdf.copyPages(originalPdf, validIndices);
     copiedPages.forEach((page) => newPdf.addPage(page));
   }
-  
+
   return await newPdf.save();
 }
 
@@ -48,13 +50,13 @@ export async function extractPdfPages(pdfBytes: Uint8Array, pageIndices: number[
 export async function rotatePdfGlobal(pdfBytes: Uint8Array, angleDegrees: number): Promise<Uint8Array> {
   const pdfDoc = await PDFDocument.load(pdfBytes);
   const pages = pdfDoc.getPages();
-  
+
   pages.forEach(page => {
     // getRotation() returns an object with an 'angle' property
     const currentRotation = page.getRotation().angle;
     page.setRotation(degrees(currentRotation + angleDegrees));
   });
-  
+
   return await pdfDoc.save();
 }
 
@@ -128,7 +130,7 @@ export async function downloadMultiplePdfs(files: { bytes: Uint8Array, filename:
       return { success: false, error: err };
     }
   }
-  
+
   // Web fallback (download sequentially - not ideal but works)
   for (const file of files) {
     const blob = new Blob([file.bytes as any], { type: 'application/pdf' });
@@ -189,4 +191,37 @@ export async function downloadMultiplePdfsExact(files: { bytes: Uint8Array, file
     }
   }
   return { success: false, error: 'IPC not available' };
+}
+
+/**
+ * Protects a PDF document with a user password.
+ * @param pdfBytes The original PDF file as a Uint8Array.
+ * @param password The user password to protect the PDF.
+ * @returns The protected PDF file as a Uint8Array.
+ */
+export async function protectPdf(pdfBytes: Uint8Array, password: string): Promise<Uint8Array> {
+  // We use qpdf-wasm because pdf-lib forks struggle with array length limits
+  // on complex/large PDFs when attempting pure-JS encryption.
+  const qpdf = await QPDF({
+    locateFile: (path: string) => {
+      if (path.endsWith('.wasm')) return qpdfWasmUrl;
+      return path;
+    }
+  });
+
+  // Write to virtual filesystem
+  qpdf.FS.writeFile('input.pdf', pdfBytes);
+
+  // Run qpdf to encrypt:
+  // --encrypt <user-password> <owner-password> <key-length> -- <input> <output>
+  // We use 256-bit AES encryption which is the modern standard
+  const exitCode = qpdf.callMain(['--encrypt', password, password, '256', '--', 'input.pdf', 'output.pdf']);
+
+  if (exitCode !== 0) {
+    throw new Error(`Failed to encrypt PDF (exit code ${exitCode})`);
+  }
+
+  // Read the encrypted file back from virtual filesystem
+  const protectedPdfBytes = qpdf.FS.readFile('output.pdf');
+  return protectedPdfBytes;
 }
