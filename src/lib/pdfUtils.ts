@@ -253,3 +253,17 @@ export async function unlockPdf(pdfBytes: Uint8Array, password: string): Promise
   // Read the decrypted file back
   return qpdf.FS.readFile('output.pdf');
 }
+
+/**
+ * Converts a URL or local HTML file to PDF using Electron's native printToPDF.
+ * @param source The URL or absolute file path to convert.
+ * @param isUrl Whether the source is a URL (true) or a file path (false).
+ * @returns The converted PDF as a Uint8Array.
+ */
+export async function convertHtmlToPdf(source: string, isUrl: boolean): Promise<Uint8Array> {
+  if (window.ipcRenderer) {
+    const buffer = await window.ipcRenderer.invoke('file:html-to-pdf', source, isUrl);
+    return new Uint8Array(buffer);
+  }
+  throw new Error('HTML to PDF conversion is only supported in the desktop app.');
+}

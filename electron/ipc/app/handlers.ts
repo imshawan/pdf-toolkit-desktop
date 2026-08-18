@@ -1,4 +1,4 @@
-import { dialog } from 'electron';
+import { dialog, BrowserWindow } from 'electron';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import type { IpcMainInvokeEvent } from 'electron';
@@ -118,4 +118,45 @@ export const saveMultiplePdfs = async (_event: IpcMainInvokeEvent, files: { buff
   }
   
   return { success: true, savedPaths };
+};
+
+export const htmlToPdf = async (_event: IpcMainInvokeEvent, source: string, isUrl: boolean) => {
+  return new Promise((resolve, reject) => {
+    let win = new BrowserWindow({
+      show: false,
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true,
+      }
+    });
+
+    win.webContents.on('did-finish-load', async () => {
+      try {
+        const pdfBuffer = await win.webContents.printToPDF({
+          printBackground: true,
+          pageSize: 'A4',
+          marginType: 0,
+        });
+        resolve(pdfBuffer);
+      } catch (err) {
+        reject(err);
+      } finally {
+        win.destroy();
+      }
+    });
+
+    win.webContents.on('did-fail-load', (_e: any, _code: any, desc: string) => {
+      reject(new Error(`Failed to load: ${desc}`));
+      win.destroy();
+    });
+
+    if (isUrl) {
+      if (!source.startsWith('http://') && !source.startsWith('https://')) {
+        source = 'https://' + source;
+      }
+      win.loadURL(source).catch(reject);
+    } else {
+      win.loadFile(source).catch(reject);
+    }
+  });
 };

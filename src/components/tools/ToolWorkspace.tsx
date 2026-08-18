@@ -11,6 +11,7 @@ import { ImageToPdfTool, ImageToPdfToolRef } from './ImageToPdfTool';
 import { XlsToPdfTool, XlsToPdfToolRef } from './XlsToPdfTool';
 import { ProtectPdfTool, ProtectPdfToolRef } from './ProtectPdfTool';
 import { UnlockPdfTool, UnlockPdfToolRef } from './UnlockPdfTool';
+import { HtmlToPdfTool, HtmlToPdfToolRef } from './HtmlToPdfTool';
 
 interface ToolWorkspaceProps {
   toolId: string;
@@ -30,6 +31,7 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
   const xls2pdfToolRef = useRef<XlsToPdfToolRef>(null);
   const protectToolRef = useRef<ProtectPdfToolRef>(null);
   const unlockToolRef = useRef<UnlockPdfToolRef>(null);
+  const html2pdfToolRef = useRef<HtmlToPdfToolRef>(null);
 
   const handleFilesDrop = (droppedFiles: File[]) => {
     // If tool doesn't support multiple files, replace instead of append
@@ -61,6 +63,8 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
       protectToolRef.current.processAndDownload();
     } else if (toolId === 'unlock' && unlockToolRef.current) {
       unlockToolRef.current.processAndDownload();
+    } else if (toolId === 'html2pdf' && html2pdfToolRef.current) {
+      html2pdfToolRef.current.processAndDownload();
     }
   };
 
@@ -73,7 +77,12 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
     rearrange: t('tools.rearrange', 'Rearrange Pages'),
     protect: t('tools.protect', 'Protect PDF'),
     unlock: t('tools.unlock', 'Unlock PDF'),
+    html2pdf: t('tools.html2pdf', 'HTML to PDF'),
   };
+
+  // Determine if the action buttons should be visible
+  // For html2pdf, it can be valid without files (URL mode)
+  const showActionButtons = files.length > 0 || toolId === 'html2pdf';
 
   return (
     <div className="flex flex-col h-full">
@@ -97,14 +106,16 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
         </div>
         
         <div className="flex items-center gap-2">
-          {files.length > 0 && (
+          {showActionButtons && (
             <>
-              <Button variant="secondary" onClick={handleClear} disabled={isProcessing}
-                className="w-48 py-2 !bg-black/5 dark:!bg-white/5 hover:!bg-red-500/10 hover:!text-red-500 !border-transparent text-black/60 dark:text-white/60"
-              >
-                <Trash2 size={14} />
-                {t('common.clearAll', 'Clear All')}
-              </Button>
+              {files.length > 0 && (
+                <Button variant="secondary" onClick={handleClear} disabled={isProcessing}
+                  className="w-48 py-2 !bg-black/5 dark:!bg-white/5 hover:!bg-red-500/10 hover:!text-red-500 !border-transparent text-black/60 dark:text-white/60"
+                >
+                  <Trash2 size={14} />
+                  {t('common.clearAll', 'Clear All')}
+                </Button>
+              )}
               <Button variant="primary" onClick={handleProcess} disabled={isProcessing}
                 className="w-48 py-2"
               >
@@ -118,7 +129,7 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
 
       {/* Main Workspace Area */}
       <div className="flex-1 p-6 overflow-hidden flex flex-col">
-        {files.length === 0 ? (
+        {files.length === 0 && toolId !== 'html2pdf' ? (
           <div className="flex-1 flex flex-col mt-4 max-w-4xl mx-auto w-full">
             <DropZone 
               onFilesDrop={handleFilesDrop} 
@@ -177,6 +188,13 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
               <UnlockPdfTool
                 ref={unlockToolRef}
                 files={files}
+                onProcessingChange={setIsProcessing}
+              />
+            ) : toolId === 'html2pdf' ? (
+              <HtmlToPdfTool
+                ref={html2pdfToolRef}
+                files={files}
+                setFiles={setFiles}
                 onProcessingChange={setIsProcessing}
               />
             ) : (

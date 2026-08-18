@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, nativeTheme, Menu, MenuItemConstructorOptions } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import { savePdf, saveMultiplePdfs, selectSaveFile, selectFolder, savePdfExact, saveMultiplePdfsExact } from './ipc/app/handlers'
+import { savePdf, saveMultiplePdfs, selectSaveFile, selectFolder, savePdfExact, saveMultiplePdfsExact, htmlToPdf } from './ipc/app/handlers'
 import pkg from '../package.json'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -40,6 +40,7 @@ function setupIpcHandlers() {
   ipcMain.handle('file:select-folder', selectFolder);
   ipcMain.handle('file:save-pdf-exact', savePdfExact);
   ipcMain.handle('file:save-multiple-pdfs-exact', saveMultiplePdfsExact);
+  ipcMain.handle('file:html-to-pdf', htmlToPdf);
 }
 
 function createWindow() {
