@@ -226,19 +226,27 @@ export const XlsToPdfTool = forwardRef<XlsToPdfToolRef, XlsToPdfToolProps>(
 
             {/* Export Mode */}
             <div className="border-t border-black/5 dark:border-white/5 pt-4">
-              <label className="block text-[12px] font-medium text-black/70 dark:text-white/70 mb-2">
+              <label className="block text-[13px] font-medium text-black/80 dark:text-white/80 mb-2">
                 Export Mode
               </label>
-              <div className="flex bg-black/5 dark:bg-white/5 p-1 rounded-lg">
+              <div className="flex p-1 bg-black/[0.04] dark:bg-white/[0.04] rounded-xl border border-black/5 dark:border-white/5 relative">
                 <button
                   onClick={() => setExportMode('combined')}
-                  className={`flex-1 text-[12px] font-medium py-1.5 rounded-md transition-all ${exportMode === 'combined' ? 'bg-white dark:bg-[#333] shadow-sm text-black dark:text-white' : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'}`}
+                  className={`flex-1 py-2 text-[13px] font-semibold rounded-lg transition-all duration-200 z-10 ${
+                    exportMode === 'combined' 
+                      ? 'bg-white dark:bg-[#2C2C2E] text-[#0071e3] dark:text-[#4da1ff] shadow-[0_2px_8px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.2)]' 
+                      : 'text-black/50 dark:text-white/50 hover:text-black/80 dark:hover:text-white/80 hover:bg-black/[0.02] dark:hover:bg-white/[0.02]'
+                  }`}
                 >
                   Single PDF
                 </button>
                 <button
                   onClick={() => setExportMode('split')}
-                  className={`flex-1 text-[12px] font-medium py-1.5 rounded-md transition-all ${exportMode === 'split' ? 'bg-white dark:bg-[#333] shadow-sm text-black dark:text-white' : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'}`}
+                  className={`flex-1 py-2 text-[13px] font-semibold rounded-lg transition-all duration-200 z-10 ${
+                    exportMode === 'split' 
+                      ? 'bg-white dark:bg-[#2C2C2E] text-[#0071e3] dark:text-[#4da1ff] shadow-[0_2px_8px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.2)]' 
+                      : 'text-black/50 dark:text-white/50 hover:text-black/80 dark:hover:text-white/80 hover:bg-black/[0.02] dark:hover:bg-white/[0.02]'
+                  }`}
                 >
                   Split Sheets
                 </button>
