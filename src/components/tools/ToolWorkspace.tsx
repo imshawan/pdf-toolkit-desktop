@@ -16,6 +16,7 @@ import { HtmlToPdfTool, HtmlToPdfToolRef } from './HtmlToPdfTool';
 import { PdfToImageTool, PdfToImageToolRef } from './PdfToImageTool';
 
 import { SignPdfTool, SignPdfToolRef } from './SignPdfTool';
+import { WatermarkPdfTool, WatermarkPdfToolRef } from './WatermarkPdfTool';
 
 interface ToolWorkspaceProps {
   toolId: string;
@@ -38,6 +39,7 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
   const html2pdfToolRef = useRef<HtmlToPdfToolRef>(null);
   const pdf2imgToolRef = useRef<PdfToImageToolRef>(null);
   const signToolRef = useRef<SignPdfToolRef>(null);
+  const watermarkToolRef = useRef<WatermarkPdfToolRef>(null);
 
   const handleFilesDrop = (droppedFiles: File[]) => {
     // If tool doesn't support multiple files, replace instead of append
@@ -75,6 +77,8 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
       pdf2imgToolRef.current.processAndDownload();
     } else if (toolId === 'sign' && signToolRef.current) {
       signToolRef.current.processAndDownload();
+    } else if (toolId === 'watermark' && watermarkToolRef.current) {
+      watermarkToolRef.current.processAndDownload();
     }
   };
 
@@ -90,6 +94,7 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
     html2pdf: t('tools.html2pdf', 'HTML to PDF'),
     pdf2img: t('tools.pdf2img', 'PDF to Image'),
     sign: t('tools.sign', 'Sign PDF'),
+    watermark: t('tools.watermark', 'Watermark PDF'),
   };
 
   // Determine if the action buttons should be visible
@@ -234,6 +239,12 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
             ) : toolId === 'sign' ? (
               <SignPdfTool
                 ref={signToolRef}
+                files={files}
+                onProcessingChange={setIsProcessing}
+              />
+            ) : toolId === 'watermark' ? (
+              <WatermarkPdfTool
+                ref={watermarkToolRef}
                 files={files}
                 onProcessingChange={setIsProcessing}
               />

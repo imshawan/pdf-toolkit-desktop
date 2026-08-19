@@ -135,7 +135,7 @@ export const htmlToPdf = async (_event: IpcMainInvokeEvent, source: string, isUr
         const pdfBuffer = await win.webContents.printToPDF({
           printBackground: true,
           pageSize: 'A4',
-          marginType: 0,
+          margins: { marginType: 'default' },
         });
         resolve(pdfBuffer);
       } catch (err) {

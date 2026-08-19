@@ -39,17 +39,17 @@ const rasterizeTextToDataURL = (text: string, fontFamily: string, color: string)
 };
 
 
-export interface SignPdfToolRef {
+export interface WatermarkPdfToolRef {
   processAndDownload: () => Promise<void>;
   hasValidInput: () => boolean;
 }
 
-interface SignPdfToolProps {
+interface WatermarkPdfToolProps {
   files: File[];
   onProcessingChange?: (isProcessing: boolean) => void;
 }
 
-interface SavedSignature {
+interface SavedWatermark {
   id: string;
   type: 'text' | 'image';
   content: string;
@@ -57,49 +57,53 @@ interface SavedSignature {
   color?: string;
 }
 
-export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files, onProcessingChange }, ref) => {
+export const WatermarkPdfTool = forwardRef<WatermarkPdfToolRef, WatermarkPdfToolProps>(({ files, onProcessingChange }, ref) => {
   const [overlays, setOverlays] = useState<OverlayData[]>([]);
-  const [savedSignatures, setSavedSignatures] = useState<SavedSignature[]>([]);
+  const [savedWatermarks, setSavedWatermarks] = useState<SavedWatermark[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [numPages, setNumPages] = useState(1);
+  const [opacity, setOpacity] = useState(0.5);
+  const [rotation, setRotation] = useState(-45);
+  const [applyToAllPages, setApplyToAllPages] = useState(true);
   
   const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const renderTaskRef = useRef<any>(null);
+  
   const [zoomLevel, setZoomLevel] = useState(1);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [resizeTrigger, setResizeTrigger] = useState(0);
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('pdf-toolkit-saved-signatures');
+      const saved = localStorage.getItem('pdf-toolkit-saved-watermarks');
       if (saved) {
-        setSavedSignatures(JSON.parse(saved));
+        setSavedWatermarks(JSON.parse(saved));
       }
     } catch (e) {}
   }, []);
 
-  const saveSignatureToStorage = (sig: SavedSignature) => {
-    setSavedSignatures(prev => {
+  const saveWatermarkToStorage = (sig: SavedWatermark) => {
+    setSavedWatermarks(prev => {
       // Avoid exact duplicates
       const filtered = prev.filter(p => p.content !== sig.content);
       const updated = [sig, ...filtered].slice(0, 5); // Keep last 5
-      localStorage.setItem('pdf-toolkit-saved-signatures', JSON.stringify(updated));
+      localStorage.setItem('pdf-toolkit-saved-watermarks', JSON.stringify(updated));
       return updated;
     });
   };
 
-  const removeSavedSignature = (id: string, e: React.MouseEvent) => {
+  const removeSavedWatermark = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setSavedSignatures(prev => {
+    setSavedWatermarks(prev => {
       const updated = prev.filter(s => s.id !== id);
-      localStorage.setItem('pdf-toolkit-saved-signatures', JSON.stringify(updated));
+      localStorage.setItem('pdf-toolkit-saved-watermarks', JSON.stringify(updated));
       return updated;
     });
   };
   
-  const [showSignatureModal, setShowSignatureModal] = useState(false);
-  const [signatureMode, setSignatureMode] = useState<'draw' | 'type' | 'upload'>('draw');
+  const [showWatermarkModal, setShowWatermarkModal] = useState(false);
+  const [watermarkMode, setWatermarkMode] = useState<'draw' | 'type' | 'upload'>('draw');
   
   // Drawing state
   const sigCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -145,6 +149,13 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
   };
   
   const fonts = [
+    { name: 'Helvetica', url: '' },
+    { name: 'Arial', url: '' },
+    { name: 'Times New Roman', url: '' },
+    { name: 'Courier New', url: '' },
+    { name: 'Verdana', url: '' },
+    { name: 'Georgia', url: '' },
+    { name: 'Impact', url: '' },
     { name: 'Caveat', url: '/fonts/Caveat.ttf' },
     { name: 'Dancing Script', url: '/fonts/DancingScript.ttf' },
     { name: 'Pacifico', url: '/fonts/Pacifico.ttf' },
@@ -277,17 +288,17 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
     hasValidInput,
     processAndDownload: async () => {
       if (!hasValidInput()) {
-        toast.error('Please add at least one signature or text overlay');
+        toast.error('Please add at least one watermark or text overlay');
         return;
       }
 
       try {
         onProcessingChange?.(true);
-        toast.loading('Applying signatures...', { id: 'sign' });
+        toast.loading('Applying watermarks...', { id: 'sign' });
 
         const arrayBuffer = await files[0].arrayBuffer();
         
-        // Fetch raw TTF bytes for typed signatures
+        // Fetch raw TTF bytes for typed watermarks
         const finalOverlays = await Promise.all(overlays.map(async (overlay) => {
           if (overlay.type === 'text') {
             const dataUrl = rasterizeTextToDataURL(overlay.content, overlay.fontFamily || 'Helvetica', overlay.color || '#000000');
@@ -363,7 +374,7 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
     setIsDrawing(false);
   };
 
-  const clearSignature = () => {
+  const clearWatermark = () => {
     const canvas = sigCanvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -371,7 +382,7 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
   };
 
   // Add Overlays
-  const handleAddDrawnSignature = () => {
+  const handleAddDrawnWatermark = () => {
     const canvas = sigCanvasRef.current;
     if (!canvas) return;
     
@@ -379,7 +390,7 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
     const ctx = canvas.getContext('2d');
     const pixelBuffer = new Uint32Array(ctx!.getImageData(0, 0, canvas.width, canvas.height).data.buffer);
     if (!pixelBuffer.some(color => color !== 0)) {
-      toast.error('Please draw a signature first');
+      toast.error('Please draw a watermark first');
       return;
     }
 
@@ -396,13 +407,13 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
       heightPercent: 0.1,
       pageIndex: currentPage
     });
-    saveSignatureToStorage({ id: Math.random().toString(), type: 'image', content: dataUrl });
-    setShowSignatureModal(false);
+    saveWatermarkToStorage({ id: Math.random().toString(), type: 'image', content: dataUrl });
+    setShowWatermarkModal(false);
   };
 
-  const handleAddTypedSignature = () => {
+  const handleAddTypedWatermark = () => {
     if (!typedName.trim()) {
-      toast.error('Please type your signature');
+      toast.error('Please type your watermark');
       return;
     }
     
@@ -421,8 +432,8 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
       heightPercent: 0.05,
       pageIndex: currentPage
     });
-    saveSignatureToStorage({ id: Math.random().toString(), type: 'text', content: typedName, fontFamily: selectedFont, color: '#000000' });
-    setShowSignatureModal(false);
+    saveWatermarkToStorage({ id: Math.random().toString(), type: 'text', content: typedName, fontFamily: selectedFont, color: '#000000' });
+    setShowWatermarkModal(false);
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -443,13 +454,13 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
         heightPercent: 0.1,
         pageIndex: currentPage
       });
-      saveSignatureToStorage({ id: Math.random().toString(), type: 'image', content });
-      setShowSignatureModal(false);
+      saveWatermarkToStorage({ id: Math.random().toString(), type: 'image', content });
+      setShowWatermarkModal(false);
     };
     reader.readAsDataURL(file);
   };
 
-  const handleAddSavedSignature = (sig: SavedSignature) => {
+  const handleAddSavedWatermark = (sig: SavedWatermark) => {
     const { xPercent, yPercent } = getCenterViewportPercentages();
     addOverlay({
       id: Math.random().toString(36).substr(2, 9),
@@ -467,8 +478,23 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
   };
 
   const addOverlay = (overlay: OverlayData) => {
-    setOverlays(prev => [...prev, overlay]);
+    const watermarkOverlay = {
+      ...overlay,
+      opacity,
+      rotation,
+      applyToAllPages
+    };
+    setOverlays(prev => [...prev, watermarkOverlay]);
   };
+
+  useEffect(() => {
+    setOverlays(prev => prev.map(o => ({
+      ...o,
+      opacity,
+      rotation,
+      applyToAllPages
+    })));
+  }, [opacity, rotation, applyToAllPages]);
 
   const removeOverlay = (id: string) => {
     setOverlays(prev => prev.filter(o => o.id !== id));
@@ -491,21 +517,21 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
         <div className="flex-1 overflow-y-auto p-4">
           <Button
             variant="primary"
-            onClick={() => setShowSignatureModal(true)}
+            onClick={() => setShowWatermarkModal(true)}
             className="w-full py-2.5 mb-6"
           >
             <PenTool size={16} />
-            Create Signature
+            Create Watermark
           </Button>
 
-          {savedSignatures.length > 0 && (
+          {savedWatermarks.length > 0 && (
             <div className="mb-6">
               <h3 className="text-[11px] font-bold text-black/40 dark:text-white/40 uppercase tracking-wider mb-3">
-                Recent Signatures
+                Recent Watermarks
               </h3>
               <div className="space-y-2">
                 <AnimatePresence>
-                {savedSignatures.map((sig) => (
+                {savedWatermarks.map((sig) => (
                   <motion.div 
                     key={sig.id} 
                     initial={{ opacity: 0, height: 0, scale: 0.9 }}
@@ -515,11 +541,11 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
                     className="relative group mb-2"
                   >
                     <button
-                      onClick={() => handleAddSavedSignature(sig)}
+                      onClick={() => handleAddSavedWatermark(sig)}
                       className="w-full h-16 bg-white dark:bg-[#2C2C2E] border border-black/5 dark:border-white/5 rounded-xl flex items-center justify-center shadow-sm hover:border-blue-500 hover:shadow-md transition-all overflow-hidden p-2 relative"
                     >
                       {sig.type === 'image' ? (
-                        <img src={sig.content} className="max-w-full max-h-full object-contain pointer-events-none" alt="Saved Signature" />
+                        <img src={sig.content} className="max-w-full max-h-full object-contain pointer-events-none" alt="Saved Watermark" />
                       ) : (
                         <span className="text-xl text-black truncate pointer-events-none" style={{ fontFamily: sig.fontFamily, color: sig.color }}>
                           {sig.content}
@@ -528,7 +554,7 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
                       <div className="absolute inset-0 bg-blue-500/0 hover:bg-blue-500/5 transition-colors" />
                     </button>
                     <button 
-                      onClick={(e) => removeSavedSignature(sig.id, e)}
+                      onClick={(e) => removeSavedWatermark(sig.id, e)}
                       className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm z-10 hover:bg-red-600 focus:outline-none"
                     >
                       <Trash2 size={12} />
@@ -546,7 +572,7 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
           
           {overlays.length === 0 ? (
             <div className="p-4 border border-dashed border-black/10 dark:border-white/10 rounded-xl bg-black/[0.02] dark:bg-white/[0.02] text-center">
-              <p className="text-[13px] text-black/50 dark:text-white/50">No signatures added yet.</p>
+              <p className="text-[13px] text-black/50 dark:text-white/50">No watermarks added yet.</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -565,7 +591,7 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
                       <span className="text-[10px] font-bold text-black/50 dark:text-white/50">Pg {overlay.pageIndex}</span>
                     </div>
                     <span className="text-[13px] font-medium text-black/80 dark:text-white/80 truncate">
-                      {overlay.type === 'text' ? overlay.content : 'Image Signature'}
+                      {overlay.type === 'text' ? overlay.content : 'Image Watermark'}
                     </span>
                   </div>
                   <button onClick={() => removeOverlay(overlay.id)} className="text-black/40 hover:text-red-500 transition-colors p-1">
@@ -582,8 +608,24 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
       {/* Right Pane: Interactive PDF Canvas */}
       <div className="flex-1 bg-black/5 dark:bg-black/20 relative flex flex-col overflow-hidden" ref={containerRef}>
         
+        {/* Watermark Settings Bar */}
+        <div className="flex-none p-4 bg-white/50 dark:bg-black/20 border-b border-black/5 dark:border-white/5 shadow-sm z-10 flex gap-6 items-center justify-center backdrop-blur-md">
+          <div className="flex items-center gap-2">
+            <label className="text-[12px] font-medium text-black/70 dark:text-white/70">Opacity ({Math.round(opacity * 100)}%)</label>
+            <input type="range" min="0.1" max="1" step="0.05" value={opacity} onChange={(e) => setOpacity(parseFloat(e.target.value))} className="w-24 accent-blue-500" />
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-[12px] font-medium text-black/70 dark:text-white/70">Rotation ({rotation}°)</label>
+            <input type="range" min="-180" max="180" step="1" value={rotation} onChange={(e) => setRotation(parseInt(e.target.value))} className="w-24 accent-blue-500" />
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-[12px] font-medium text-black/70 dark:text-white/70">Apply to all pages</label>
+            <input type="checkbox" checked={applyToAllPages} onChange={(e) => setApplyToAllPages(e.target.checked)} className="w-4 h-4 accent-blue-500 rounded" />
+          </div>
+        </div>
+
         {/* Toolbar */}
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-4 bg-white/90 dark:bg-[#252525]/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-black/10 dark:border-white/10">
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-20 flex items-center gap-4 bg-white/90 dark:bg-[#252525]/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-black/10 dark:border-white/10">
           <div className="flex items-center gap-1 border-r border-black/10 dark:border-white/10 pr-4">
             <button 
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
@@ -629,7 +671,7 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
               <canvas ref={canvasRef} className="block" />
               
               {/* Overlays for Current Page */}
-              {dimensions.width > 0 && overlays.filter(o => o.pageIndex === currentPage).map(overlay => (
+              {dimensions.width > 0 && overlays.filter(o => o.applyToAllPages || o.pageIndex === currentPage).map(overlay => (
                 <Rnd
                   key={overlay.id}
                   bounds="parent"
@@ -667,9 +709,15 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
                   }}
                   className="group border-2 border-transparent hover:border-blue-500 transition-colors z-30 flex items-center justify-center cursor-move"
                 >
-                  <div className="w-full h-full relative flex items-center justify-center">
+                  <div 
+                    className="w-full h-full relative flex items-center justify-center"
+                    style={{ 
+                      opacity: overlay.opacity !== undefined ? overlay.opacity : 1, 
+                      transform: `rotate(${overlay.rotation || 0}deg)` 
+                    }}
+                  >
                     {overlay.type === 'image' ? (
-                      <img src={overlay.content} className="w-full h-full pointer-events-none drop-shadow-sm object-contain" alt="Signature" />
+                      <img src={overlay.content} className="w-full h-full pointer-events-none drop-shadow-sm object-contain" alt="Watermark" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center pointer-events-none drop-shadow-sm overflow-visible">
                         {overlay.content ? (
@@ -699,9 +747,9 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
         </div>
       </div>
 
-      {/* Signature Modal */}
+      {/* Watermark Modal */}
       <AnimatePresence>
-        {showSignatureModal && (
+        {showWatermarkModal && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -718,27 +766,27 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
             >
               <div className="flex p-2 bg-[#F5F5F7] dark:bg-[#1E1E1E] border-b border-black/5 dark:border-white/5 gap-2 shrink-0">
               <button
-                onClick={() => setSignatureMode('draw')}
-                className={`flex-1 py-2 text-[13px] font-semibold rounded-lg transition-all ${signatureMode === 'draw' ? 'bg-white dark:bg-[#2C2C2E] shadow-sm text-blue-500' : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'}`}
+                onClick={() => setWatermarkMode('draw')}
+                className={`flex-1 py-2 text-[13px] font-semibold rounded-lg transition-all ${watermarkMode === 'draw' ? 'bg-white dark:bg-[#2C2C2E] shadow-sm text-blue-500' : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'}`}
               >
                 Draw
               </button>
               <button
-                onClick={() => setSignatureMode('type')}
-                className={`flex-1 py-2 text-[13px] font-semibold rounded-lg transition-all ${signatureMode === 'type' ? 'bg-white dark:bg-[#2C2C2E] shadow-sm text-blue-500' : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'}`}
+                onClick={() => setWatermarkMode('type')}
+                className={`flex-1 py-2 text-[13px] font-semibold rounded-lg transition-all ${watermarkMode === 'type' ? 'bg-white dark:bg-[#2C2C2E] shadow-sm text-blue-500' : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'}`}
               >
                 Type
               </button>
               <button
-                onClick={() => setSignatureMode('upload')}
-                className={`flex-1 py-2 text-[13px] font-semibold rounded-lg transition-all ${signatureMode === 'upload' ? 'bg-white dark:bg-[#2C2C2E] shadow-sm text-blue-500' : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'}`}
+                onClick={() => setWatermarkMode('upload')}
+                className={`flex-1 py-2 text-[13px] font-semibold rounded-lg transition-all ${watermarkMode === 'upload' ? 'bg-white dark:bg-[#2C2C2E] shadow-sm text-blue-500' : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'}`}
               >
                 Upload
               </button>
             </div>
             
             <div className="p-6 flex-1 flex flex-col min-h-0 overflow-hidden">
-              {signatureMode === 'draw' && (
+              {watermarkMode === 'draw' && (
                 <>
                   <div className="flex-1 bg-[#F9F9F9] dark:bg-[#1E1E1E] rounded-xl border border-black/10 dark:border-white/10 overflow-hidden relative min-h-0">
                     <canvas
@@ -756,13 +804,13 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
                     />
                     <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center pointer-events-none">
                       <span className="text-[11px] font-medium text-black/30 dark:text-white/30 uppercase tracking-wider">Draw here</span>
-                      <button onClick={(e) => { e.stopPropagation(); clearSignature(); }} className="text-[11px] font-semibold text-black/50 dark:text-white/50 hover:text-red-500 pointer-events-auto bg-white/80 dark:bg-black/80 px-2 py-1 rounded">Clear</button>
+                      <button onClick={(e) => { e.stopPropagation(); clearWatermark(); }} className="text-[11px] font-semibold text-black/50 dark:text-white/50 hover:text-red-500 pointer-events-auto bg-white/80 dark:bg-black/80 px-2 py-1 rounded">Clear</button>
                     </div>
                   </div>
                 </>
               )}
               
-              {signatureMode === 'type' && (
+              {watermarkMode === 'type' && (
                 <div className="flex-1 flex flex-col min-h-0 space-y-5">
                   <div className="shrink-0">
                     <label className="block text-[12px] font-medium text-black/60 dark:text-white/60 mb-2">Your Name</label>
@@ -784,7 +832,7 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
                           className={`flex items-center justify-between p-4 rounded-xl border transition-all shrink-0 ${selectedFont === f.name ? 'border-blue-500 bg-blue-50 dark:bg-blue-500/10' : 'border-black/10 dark:border-white/10 bg-[#F9F9F9] dark:bg-[#1C1C1E] hover:border-black/20 dark:hover:border-white/20'}`}
                         >
                           <span style={{ fontFamily: f.name }} className="text-2xl text-black dark:text-white truncate">
-                            {typedName || 'Signature Preview'}
+                            {typedName || 'Watermark Preview'}
                           </span>
                           {selectedFont === f.name && <Check size={16} className="text-blue-500 shrink-0" />}
                         </button>
@@ -794,7 +842,7 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
                 </div>
               )}
 
-              {signatureMode === 'upload' && (
+              {watermarkMode === 'upload' && (
                 <div className="flex-1 flex flex-col items-center justify-center min-h-0 border-2 border-dashed border-black/10 dark:border-white/10 rounded-xl bg-[#F9F9F9] dark:bg-[#1E1E1E] hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer" onClick={() => document.getElementById('sig-upload')?.click()}>
                   <Upload size={32} className="text-black/30 dark:text-white/30 mb-3" />
                   <span className="text-[14px] font-medium text-black/70 dark:text-white/70">Click to upload image</span>
@@ -805,16 +853,16 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
             </div>
 
             <div className="p-4 border-t border-black/5 dark:border-white/5 bg-[#F5F5F7] dark:bg-[#1E1E1E] flex justify-end gap-3">
-              <Button variant="secondary" onClick={() => setShowSignatureModal(false)} className="py-2 px-5">
+              <Button variant="secondary" onClick={() => setShowWatermarkModal(false)} className="py-2 px-5">
                 Cancel
               </Button>
-              {signatureMode !== 'upload' && (
+              {watermarkMode !== 'upload' && (
                 <Button 
                   variant="primary"
-                  onClick={signatureMode === 'draw' ? handleAddDrawnSignature : handleAddTypedSignature}
+                  onClick={watermarkMode === 'draw' ? handleAddDrawnWatermark : handleAddTypedWatermark}
                   className="py-2 px-6"
                 >
-                  Add Signature
+                  Add Watermark
                 </Button>
               )}
             </div>
@@ -827,4 +875,4 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
   );
 });
 
-SignPdfTool.displayName = 'SignPdfTool';
+WatermarkPdfTool.displayName = 'WatermarkPdfTool';

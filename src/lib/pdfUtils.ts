@@ -16,6 +16,9 @@ export interface OverlayData {
   widthPercent: number;
   heightPercent: number;
   pageIndex: number; // 1-based
+  opacity?: number; // 0 to 1, default 1
+  rotation?: number; // degrees, default 0
+  applyToAllPages?: boolean; // if true, applies to all pages
 }
 
 export async function signPdf(sourceBytes: ArrayBuffer, overlays: OverlayData[]): Promise<Uint8Array> {
@@ -25,55 +28,112 @@ export async function signPdf(sourceBytes: ArrayBuffer, overlays: OverlayData[])
   const pages = pdfDoc.getPages();
 
   for (const overlay of overlays) {
-    if (overlay.pageIndex < 1 || overlay.pageIndex > pages.length) continue;
-    const page = pages[overlay.pageIndex - 1];
-    const { width: pdfWidth, height: pdfHeight } = page.getSize();
+    const targetPages = overlay.applyToAllPages ? pages : [pages[overlay.pageIndex - 1]];
+    if (!targetPages[0]) continue; // Guard if specific page doesn't exist
 
-    // Convert percentages to absolute PDF coordinates
-    // HTML places (0,0) at top-left. pdf-lib places (0,0) at bottom-left.
-    const x = overlay.xPercent * pdfWidth;
-    const width = overlay.widthPercent * pdfWidth;
-    const height = overlay.heightPercent * pdfHeight;
-    const y = pdfHeight - (overlay.yPercent * pdfHeight) - height;
+    let embeddedFont;
+    if (overlay.type === 'text' && overlay.fontBytes) {
+      embeddedFont = await pdfDoc.embedFont(overlay.fontBytes);
+    }
 
+    let embeddedImage;
     if (overlay.type === 'image') {
-      try {
-        const base64Data = overlay.content.split(',')[1];
-        const imageBytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
-        
-        // Try embedding as PNG, fallback to JPG if needed
-        let imageToDraw;
-        if (overlay.content.includes('image/png')) {
-          imageToDraw = await pdfDoc.embedPng(imageBytes);
-        } else {
-          imageToDraw = await pdfDoc.embedJpg(imageBytes);
-        }
-
-        page.drawImage(imageToDraw, {
-          x,
-          y,
-          width,
-          height
-        });
-      } catch (err) {
-        console.error('Failed to embed image signature:', err);
+      const base64Data = overlay.content.split(',')[1];
+      const imageBytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+      if (overlay.content.startsWith('data:image/png')) {
+        embeddedImage = await pdfDoc.embedPng(imageBytes);
+      } else if (overlay.content.startsWith('data:image/jpeg') || overlay.content.startsWith('data:image/jpg')) {
+        embeddedImage = await pdfDoc.embedJpg(imageBytes);
       }
-    } else if (overlay.type === 'text') {
-      try {
-        let customFont;
-        if (overlay.fontBytes) {
-          customFont = await pdfDoc.embedFont(overlay.fontBytes);
-        }
+    }
+
+    // Apply to each target page
+    for (const page of targetPages) {
+      const { width, height } = page.getSize();
+      
+      const x = width * overlay.xPercent;
+      const y = height * (1 - overlay.yPercent - overlay.heightPercent);
+      const renderWidth = width * overlay.widthPercent;
+      const renderHeight = height * overlay.heightPercent;
+      
+      const opacity = overlay.opacity !== undefined ? overlay.opacity : 1.0;
+      
+      // CSS rotate(45deg) is clockwise. pdf-lib degrees(45) is counter-clockwise.
+      // So we negate the degrees to match the UI clockwise rotation visually.
+      const rotationDegrees = overlay.rotation || 0;
+      const rad = (-rotationDegrees * Math.PI) / 180;
+      const rotationAngle = degrees(-rotationDegrees);
+
+      // We must rotate around the center of the bounding box to match the frontend CSS transform origin.
+      const cx = x + renderWidth / 2;
+      const cy = y + renderHeight / 2;
+
+      if (overlay.type === 'image' && embeddedImage) {
+        // UI uses object-fit: contain, which centers the image and preserves aspect ratio
+        const imgWidth = embeddedImage.width;
+        const imgHeight = embeddedImage.height;
+        const scale = Math.min(renderWidth / imgWidth, renderHeight / imgHeight);
+        
+        const finalWidth = imgWidth * scale;
+        const finalHeight = imgHeight * scale;
+        
+        const offsetX = (renderWidth - finalWidth) / 2;
+        const offsetY = (renderHeight - finalHeight) / 2;
+
+        // Unrotated origin for centered image
+        const originX = x + offsetX;
+        const originY = y + offsetY;
+        
+        // Calculate new origin after rotating around center (cx, cy)
+        const dx = originX - cx;
+        const dy = originY - cy;
+        const drawX = cx + (dx * Math.cos(rad) - dy * Math.sin(rad));
+        const drawY = cy + (dx * Math.sin(rad) + dy * Math.cos(rad));
+
+        page.drawImage(embeddedImage, {
+          x: drawX,
+          y: drawY,
+          width: finalWidth,
+          height: finalHeight,
+          opacity,
+          rotate: rotationAngle
+        });
+      } else if (overlay.type === 'text' && embeddedFont) {
+        const hex = overlay.color || '#000000';
+        const r = parseInt(hex.slice(1, 3), 16) / 255;
+        const g = parseInt(hex.slice(3, 5), 16) / 255;
+        const b = parseInt(hex.slice(5, 7), 16) / 255;
+        
+        // Force the backend to use the EXACT same deterministic formula as the frontend UI.
+        // This guarantees visual 1:1 parity regardless of true font metrics.
+        let calculatedSize = Math.min(
+          renderWidth / (overlay.content.length * 0.5),
+          renderHeight * 0.8
+        );
+
+        // Text is perfectly centered in the bounding box (cx, cy)
+        const textWidth = embeddedFont.widthOfTextAtSize(overlay.content, calculatedSize);
+        
+        // pdf-lib draws text from the bottom-left baseline
+        const originX = cx - (textWidth / 2);
+        // Approximate baseline offset from vertical center is ~30% of font size
+        const originY = cy - (calculatedSize * 0.3);
+        
+        // Calculate new origin after rotating around center (cx, cy)
+        const dx = originX - cx;
+        const dy = originY - cy;
+        const drawX = cx + (dx * Math.cos(rad) - dy * Math.sin(rad));
+        const drawY = cy + (dx * Math.sin(rad) + dy * Math.cos(rad));
 
         page.drawText(overlay.content, {
-          x,
-          y: y + height / 4, // Adjust text baseline slightly up
-          size: height * 0.48, // Match the 48px relative to 100px viewBox in SVG
-          font: customFont,
-          color: overlay.color ? hexToRgb(overlay.color) : rgb(0, 0, 0),
+          x: drawX,
+          y: drawY, 
+          size: calculatedSize,
+          font: embeddedFont,
+          color: rgb(r, g, b),
+          opacity,
+          rotate: rotationAngle
         });
-      } catch (err) {
-        console.error('Failed to embed text signature:', err);
       }
     }
   }

@@ -91,3 +91,26 @@ body {
   font-style: normal;
 }
 
+
+
+
+@font-face {
+  font-family: 'Mr De Haviland';
+  src: url('/fonts/MrDeHaviland.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Great Vibes';
+  src: url('/fonts/GreatVibes.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Allura';
+  src: url('/fonts/Allura.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Alex Brush';
+  src: url('/fonts/AlexBrush.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Sacramento';
+  src: url('/fonts/Sacramento.ttf') format('truetype');
+}
