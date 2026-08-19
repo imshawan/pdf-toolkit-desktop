@@ -14,6 +14,8 @@ import { UnlockPdfTool, UnlockPdfToolRef } from './UnlockPdfTool';
 import { HtmlToPdfTool, HtmlToPdfToolRef } from './HtmlToPdfTool';
 import { PdfToImageTool, PdfToImageToolRef } from './PdfToImageTool';
 
+import { SignPdfTool, SignPdfToolRef } from './SignPdfTool';
+
 interface ToolWorkspaceProps {
   toolId: string;
   onBack: () => void;
@@ -34,6 +36,7 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
   const unlockToolRef = useRef<UnlockPdfToolRef>(null);
   const html2pdfToolRef = useRef<HtmlToPdfToolRef>(null);
   const pdf2imgToolRef = useRef<PdfToImageToolRef>(null);
+  const signToolRef = useRef<SignPdfToolRef>(null);
 
   const handleFilesDrop = (droppedFiles: File[]) => {
     // If tool doesn't support multiple files, replace instead of append
@@ -69,6 +72,8 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
       html2pdfToolRef.current.processAndDownload();
     } else if (toolId === 'pdf2img' && pdf2imgToolRef.current) {
       pdf2imgToolRef.current.processAndDownload();
+    } else if (toolId === 'sign' && signToolRef.current) {
+      signToolRef.current.processAndDownload();
     }
   };
 
@@ -83,6 +88,7 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
     unlock: t('tools.unlock', 'Unlock PDF'),
     html2pdf: t('tools.html2pdf', 'HTML to PDF'),
     pdf2img: t('tools.pdf2img', 'PDF to Image'),
+    sign: t('tools.sign', 'Sign PDF'),
   };
 
   // Determine if the action buttons should be visible
@@ -207,6 +213,12 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
                 ref={pdf2imgToolRef}
                 files={files}
                 setFiles={setFiles}
+                onProcessingChange={setIsProcessing}
+              />
+            ) : toolId === 'sign' ? (
+              <SignPdfTool
+                ref={signToolRef}
+                files={files}
                 onProcessingChange={setIsProcessing}
               />
             ) : (

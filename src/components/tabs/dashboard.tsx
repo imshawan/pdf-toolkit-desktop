@@ -9,7 +9,8 @@ import {
   GripHorizontal,
   Lock,
   Unlock,
-  Globe
+  Globe,
+  PenTool
 } from 'lucide-react';
 
 interface DashboardProps {
@@ -24,6 +25,7 @@ export function Dashboard({ onToolSelect }: DashboardProps) {
     { id: 'split', icon: Scissors, label: t('tools.split'), desc: t('tools.splitDesc'), iconBg: 'bg-orange-500' },
     { id: 'rotate', icon: RotateCcw, label: t('tools.rotate', 'Rotate'), desc: t('tools.rotateDesc', 'Rotate PDF pages'), iconBg: 'bg-emerald-500' },
     { id: 'rearrange', icon: GripHorizontal, label: t('tools.rearrange', 'Rearrange'), desc: t('tools.rearrangeDesc', 'Reorder pages'), iconBg: 'bg-cyan-500' },
+    { id: 'sign', icon: PenTool, label: t('tools.sign', 'Sign'), desc: t('tools.signDesc', 'Add your signature to a PDF'), iconBg: 'bg-purple-500' },
     { id: 'protect', icon: Lock, label: t('tools.protect', 'Protect'), desc: t('tools.protectDesc', 'Add a password to protect your PDF'), iconBg: 'bg-indigo-500' },
     { id: 'unlock', icon: Unlock, label: t('tools.unlock', 'Unlock'), desc: t('tools.unlockDesc', 'Remove password from a PDF'), iconBg: 'bg-teal-500' },
   ];

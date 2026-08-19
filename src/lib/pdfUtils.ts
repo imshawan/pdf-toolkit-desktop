@@ -1,6 +1,95 @@
-import { PDFDocument, degrees } from 'pdf-lib';
+import { PDFDocument, degrees, rgb } from 'pdf-lib';
+import fontkit from '@pdf-lib/fontkit';
 import QPDF from '../lib/qpdf/qpdf.js';
 import qpdfWasmUrl from '../lib/qpdf/qpdf.wasm?url';
+
+export interface OverlayData {
+  id: string;
+  type: 'image' | 'text';
+  content: string; // base64 string for image, raw string for text
+  fontFamily?: string;
+  fontBytes?: ArrayBuffer; // Raw TTF bytes for embedding
+  fontSize?: number;
+  color?: string; // hex
+  xPercent: number; // 0 to 1
+  yPercent: number; // 0 to 1
+  widthPercent: number;
+  heightPercent: number;
+  pageIndex: number; // 1-based
+}
+
+export async function signPdf(sourceBytes: ArrayBuffer, overlays: OverlayData[]): Promise<Uint8Array> {
+  const pdfDoc = await PDFDocument.load(sourceBytes);
+  pdfDoc.registerFontkit(fontkit);
+
+  const pages = pdfDoc.getPages();
+
+  for (const overlay of overlays) {
+    if (overlay.pageIndex < 1 || overlay.pageIndex > pages.length) continue;
+    const page = pages[overlay.pageIndex - 1];
+    const { width: pdfWidth, height: pdfHeight } = page.getSize();
+
+    // Convert percentages to absolute PDF coordinates
+    // HTML places (0,0) at top-left. pdf-lib places (0,0) at bottom-left.
+    const x = overlay.xPercent * pdfWidth;
+    const width = overlay.widthPercent * pdfWidth;
+    const height = overlay.heightPercent * pdfHeight;
+    const y = pdfHeight - (overlay.yPercent * pdfHeight) - height;
+
+    if (overlay.type === 'image') {
+      try {
+        const base64Data = overlay.content.split(',')[1];
+        const imageBytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+        
+        // Try embedding as PNG, fallback to JPG if needed
+        let imageToDraw;
+        if (overlay.content.includes('image/png')) {
+          imageToDraw = await pdfDoc.embedPng(imageBytes);
+        } else {
+          imageToDraw = await pdfDoc.embedJpg(imageBytes);
+        }
+
+        page.drawImage(imageToDraw, {
+          x,
+          y,
+          width,
+          height
+        });
+      } catch (err) {
+        console.error('Failed to embed image signature:', err);
+      }
+    } else if (overlay.type === 'text') {
+      try {
+        let customFont;
+        if (overlay.fontBytes) {
+          customFont = await pdfDoc.embedFont(overlay.fontBytes);
+        }
+
+        page.drawText(overlay.content, {
+          x,
+          y: y + height / 4, // Adjust text baseline slightly up
+          size: height * 0.48, // Match the 48px relative to 100px viewBox in SVG
+          font: customFont,
+          color: overlay.color ? hexToRgb(overlay.color) : rgb(0, 0, 0),
+        });
+      } catch (err) {
+        console.error('Failed to embed text signature:', err);
+      }
+    }
+  }
+
+  return await pdfDoc.save();
+}
+
+// Helper to convert hex to pdf-lib rgb
+function hexToRgb(hex: string) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? rgb(
+    parseInt(result[1], 16) / 255,
+    parseInt(result[2], 16) / 255,
+    parseInt(result[3], 16) / 255
+  ) : rgb(0, 0, 0);
+}
 
 /**
  * Merges multiple PDF files into a single PDF document.
