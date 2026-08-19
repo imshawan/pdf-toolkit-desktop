@@ -1,4 +1,4 @@
-import { useState, forwardRef, useImperativeHandle } from 'react';
+import { useState, forwardRef, useImperativeHandle, useMemo } from 'react';
 import { Globe, FileCode } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
@@ -108,6 +108,11 @@ export const HtmlToPdfTool = forwardRef<HtmlToPdfToolRef, HtmlToPdfToolProps>(({
       }
     }
   }));
+
+  const filePreviewUrl = useMemo(() => {
+    if (files.length > 0 && mode === 'file') return URL.createObjectURL(files[0]);
+    return null;
+  }, [files, mode]);
 
   return (
     <div className="flex flex-row h-full w-full bg-white dark:bg-[#1C1C1E] rounded-2xl border border-black/10 dark:border-white/10 overflow-hidden shadow-sm relative">
@@ -259,9 +264,9 @@ export const HtmlToPdfTool = forwardRef<HtmlToPdfToolRef, HtmlToPdfToolProps>(({
             className="w-full h-full rounded-xl shadow-md bg-white border border-black/10 dark:border-white/10"
             sandbox="allow-same-origin allow-scripts"
           />
-        ) : (mode === 'file' && files.length > 0) ? (
+        ) : (mode === 'file' && filePreviewUrl) ? (
           <iframe 
-            src={URL.createObjectURL(files[0])} 
+            src={filePreviewUrl} 
             className="w-full h-full rounded-xl shadow-md bg-white border border-black/10 dark:border-white/10"
             sandbox="allow-same-origin allow-scripts"
           />

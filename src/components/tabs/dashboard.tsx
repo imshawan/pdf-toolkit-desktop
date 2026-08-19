@@ -30,6 +30,7 @@ export function Dashboard({ onToolSelect }: DashboardProps) {
 
   const convertTools = [
     { id: 'img2pdf', icon: ImageIcon, label: t('tools.img2pdf'), desc: t('tools.img2pdfDesc'), iconBg: 'bg-blue-500' },
+    { id: 'pdf2img', icon: ImageIcon, label: t('tools.pdf2img', 'PDF to Image'), desc: t('tools.pdf2imgDesc', 'Extract PDF pages to images'), iconBg: 'bg-indigo-500' },
     { id: 'xls2pdf', icon: Table, label: t('tools.xls2pdf'), desc: t('tools.xls2pdfDesc'), iconBg: 'bg-pink-500' },
     { id: 'html2pdf', icon: Globe, label: t('tools.html2pdf', 'HTML to PDF'), desc: t('tools.html2pdfDesc', 'Convert Webpages to PDF'), iconBg: 'bg-indigo-600' },
   ];

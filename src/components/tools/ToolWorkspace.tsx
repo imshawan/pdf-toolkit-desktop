@@ -12,6 +12,7 @@ import { XlsToPdfTool, XlsToPdfToolRef } from './XlsToPdfTool';
 import { ProtectPdfTool, ProtectPdfToolRef } from './ProtectPdfTool';
 import { UnlockPdfTool, UnlockPdfToolRef } from './UnlockPdfTool';
 import { HtmlToPdfTool, HtmlToPdfToolRef } from './HtmlToPdfTool';
+import { PdfToImageTool, PdfToImageToolRef } from './PdfToImageTool';
 
 interface ToolWorkspaceProps {
   toolId: string;
@@ -32,6 +33,7 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
   const protectToolRef = useRef<ProtectPdfToolRef>(null);
   const unlockToolRef = useRef<UnlockPdfToolRef>(null);
   const html2pdfToolRef = useRef<HtmlToPdfToolRef>(null);
+  const pdf2imgToolRef = useRef<PdfToImageToolRef>(null);
 
   const handleFilesDrop = (droppedFiles: File[]) => {
     // If tool doesn't support multiple files, replace instead of append
@@ -65,6 +67,8 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
       unlockToolRef.current.processAndDownload();
     } else if (toolId === 'html2pdf' && html2pdfToolRef.current) {
       html2pdfToolRef.current.processAndDownload();
+    } else if (toolId === 'pdf2img' && pdf2imgToolRef.current) {
+      pdf2imgToolRef.current.processAndDownload();
     }
   };
 
@@ -78,6 +82,7 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
     protect: t('tools.protect', 'Protect PDF'),
     unlock: t('tools.unlock', 'Unlock PDF'),
     html2pdf: t('tools.html2pdf', 'HTML to PDF'),
+    pdf2img: t('tools.pdf2img', 'PDF to Image'),
   };
 
   // Determine if the action buttons should be visible
@@ -193,6 +198,13 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
             ) : toolId === 'html2pdf' ? (
               <HtmlToPdfTool
                 ref={html2pdfToolRef}
+                files={files}
+                setFiles={setFiles}
+                onProcessingChange={setIsProcessing}
+              />
+            ) : toolId === 'pdf2img' ? (
+              <PdfToImageTool
+                ref={pdf2imgToolRef}
                 files={files}
                 setFiles={setFiles}
                 onProcessingChange={setIsProcessing}
