@@ -38,35 +38,25 @@ export function Dashboard({ onToolSelect }: DashboardProps) {
     { id: 'html2pdf', icon: Globe, label: t('tools.html2pdf', 'HTML to PDF'), desc: t('tools.html2pdfDesc', 'Convert Webpages to PDF'), iconBg: 'bg-indigo-600' },
   ];
 
-  const renderToolRow = (tool: any, isLast: boolean) => {
+  const renderToolCard = (tool: any) => {
     const Icon = tool.icon;
+    
     return (
       <button
         key={tool.id}
         onClick={() => onToolSelect(tool.id)}
-        className="w-full flex items-center px-4 py-3 relative group focus:outline-none transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+        className="group flex flex-col text-left p-5 bg-white/60 dark:bg-[#1E1E1E]/60 backdrop-blur-xl border border-black/[0.04] dark:border-white/[0.04] rounded-[24px] transition-all duration-300 hover:bg-white/90 dark:hover:bg-[#252525]/90 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 hover:ring-2 hover:ring-[#0071E3] hover:border-transparent focus-visible:ring-2 focus-visible:ring-[#0071E3] focus-visible:border-transparent outline-none h-[160px] w-full"
       >
-        <div className="flex items-center gap-3 w-full">
-          <div className={`flex size-[28px] shrink-0 items-center justify-center rounded-[7px] text-white shadow-sm ${tool.iconBg}`}>
-            <Icon size={16} strokeWidth={2} />
-          </div>
-          
-          <div className={`flex flex-1 items-center justify-between pb-3 -mb-3 ${!isLast ? 'border-b border-black/5 dark:border-white/5' : ''}`}>
-            <div className="flex flex-col text-left">
-              <span className="text-[13px] text-black dark:text-white font-medium">
-                {tool.label}
-              </span>
-              <span className="text-[11px] text-black/50 dark:text-white/50">
-                {tool.desc}
-              </span>
-            </div>
-            <div className="text-black/30 dark:text-white/30 group-hover:text-black/50 dark:group-hover:text-white/50 transition-colors">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m9 18 6-6-6-6"/>
-              </svg>
-            </div>
-          </div>
+        <div className={`w-10 h-10 mb-4 rounded-[12px] flex items-center justify-center text-white shadow-sm ${tool.iconBg} transition-transform duration-300 group-hover:scale-105`}>
+          <Icon size={20} strokeWidth={2} />
         </div>
+        
+        <span className="text-[15px] font-semibold text-black/90 dark:text-white/90 tracking-tight mb-1">
+          {tool.label}
+        </span>
+        <span className="text-[13px] text-black/50 dark:text-white/50 leading-relaxed line-clamp-2">
+          {tool.desc}
+        </span>
       </button>
     );
   };
@@ -92,26 +82,28 @@ export function Dashboard({ onToolSelect }: DashboardProps) {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="flex flex-col pb-20 p-8 max-w-2xl mx-auto gap-8 mt-4"
+      className="flex flex-col pb-20 p-8 max-w-[1200px] mx-auto gap-12 mt-4"
     >
-      <motion.div variants={itemVariants} className="flex flex-col text-left mb-2">
-        <h2 className="text-[28px] font-bold tracking-tight text-black dark:text-white leading-tight">
+      <motion.div variants={itemVariants} className="flex flex-col text-left mb-2 px-2">
+        <h2 className="text-[34px] font-extrabold tracking-tight text-black dark:text-white leading-tight">
           {t('dashboard.overview')}
         </h2>
-        <p className="text-[13px] text-black/50 dark:text-white/50 mt-1">
+        <p className="text-[15px] text-black/50 dark:text-white/50 mt-1 font-medium">
           {t('dashboard.subtitle')}
         </p>
       </motion.div>
 
-      <motion.div variants={itemVariants}>
-        <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl border border-black/10 dark:border-white/10 shadow-sm overflow-hidden flex flex-col">
-          {coreTools.map((tool, index) => renderToolRow(tool, index === coreTools.length - 1))}
+      <motion.div variants={itemVariants} className="flex flex-col gap-4">
+        <h3 className="text-[15px] font-bold text-black/60 dark:text-white/60 uppercase tracking-wider ml-2">Core Tools</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {coreTools.map((tool) => renderToolCard(tool))}
         </div>
       </motion.div>
       
-      <motion.div variants={itemVariants}>
-        <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl border border-black/10 dark:border-white/10 shadow-sm overflow-hidden flex flex-col">
-          {convertTools.map((tool, index) => renderToolRow(tool, index === convertTools.length - 1))}
+      <motion.div variants={itemVariants} className="flex flex-col gap-4">
+        <h3 className="text-[15px] font-bold text-black/60 dark:text-white/60 uppercase tracking-wider ml-2">Conversion</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {convertTools.map((tool) => renderToolCard(tool))}
         </div>
       </motion.div>
     </motion.div>
