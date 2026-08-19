@@ -5,6 +5,7 @@ import { signPdf, OverlayData, downloadPdf } from '../../lib/pdfUtils';
 import * as pdfjsLib from 'pdfjs-dist';
 import { Rnd } from 'react-rnd';
 import { Button } from '../ui/Button';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export interface SignPdfToolRef {
   processAndDownload: () => Promise<void>;
@@ -454,8 +455,16 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
                 Recent Signatures
               </h3>
               <div className="space-y-2">
+                <AnimatePresence>
                 {savedSignatures.map((sig) => (
-                  <div key={sig.id} className="relative group">
+                  <motion.div 
+                    key={sig.id} 
+                    initial={{ opacity: 0, height: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, height: 'auto', scale: 1 }}
+                    exit={{ opacity: 0, height: 0, scale: 0.9 }}
+                    transition={{ duration: 0.2 }}
+                    className="relative group mb-2"
+                  >
                     <button
                       onClick={() => handleAddSavedSignature(sig)}
                       className="w-full h-16 bg-white dark:bg-[#2C2C2E] border border-black/5 dark:border-white/5 rounded-xl flex items-center justify-center shadow-sm hover:border-blue-500 hover:shadow-md transition-all overflow-hidden p-2 relative"
@@ -475,8 +484,9 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
                     >
                       <Trash2 size={12} />
                     </button>
-                  </div>
+                  </motion.div>
                 ))}
+                </AnimatePresence>
               </div>
             </div>
           )}
@@ -491,8 +501,16 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
             </div>
           ) : (
             <div className="space-y-2">
+              <AnimatePresence>
               {overlays.map((overlay) => (
-                <div key={overlay.id} className="flex items-center justify-between p-3 bg-white dark:bg-[#2C2C2E] border border-black/5 dark:border-white/5 rounded-xl shadow-sm">
+                <motion.div 
+                  key={overlay.id} 
+                  initial={{ opacity: 0, height: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, height: 'auto', scale: 1 }}
+                  exit={{ opacity: 0, height: 0, scale: 0.9 }}
+                  transition={{ duration: 0.2 }}
+                  className="flex items-center justify-between p-3 bg-white dark:bg-[#2C2C2E] border border-black/5 dark:border-white/5 rounded-xl shadow-sm mb-2"
+                >
                   <div className="flex items-center gap-3 overflow-hidden">
                     <div className="w-6 h-6 rounded-md bg-black/5 dark:bg-white/5 flex items-center justify-center shrink-0">
                       <span className="text-[10px] font-bold text-black/50 dark:text-white/50">Pg {overlay.pageIndex}</span>
@@ -504,8 +522,9 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
                   <button onClick={() => removeOverlay(overlay.id)} className="text-black/40 hover:text-red-500 transition-colors p-1">
                     <Trash2 size={14} />
                   </button>
-                </div>
+                </motion.div>
               ))}
+              </AnimatePresence>
             </div>
           )}
         </div>
@@ -628,10 +647,23 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
       </div>
 
       {/* Signature Modal */}
-      {showSignatureModal && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-[#252525] w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-black/10 dark:border-white/10 flex flex-col">
-            <div className="flex p-2 bg-[#F5F5F7] dark:bg-[#1E1E1E] border-b border-black/5 dark:border-white/5 gap-2">
+      <AnimatePresence>
+        {showSignatureModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="absolute inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, y: 10, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.95, y: 10, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              className="bg-white dark:bg-[#252525] w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-black/10 dark:border-white/10 flex flex-col"
+            >
+              <div className="flex p-2 bg-[#F5F5F7] dark:bg-[#1E1E1E] border-b border-black/5 dark:border-white/5 gap-2">
               <button
                 onClick={() => setSignatureMode('draw')}
                 className={`flex-1 py-2 text-[13px] font-semibold rounded-lg transition-all ${signatureMode === 'draw' ? 'bg-white dark:bg-[#2C2C2E] shadow-sm text-blue-500' : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'}`}
@@ -733,9 +765,10 @@ export const SignPdfTool = forwardRef<SignPdfToolRef, SignPdfToolProps>(({ files
                 </Button>
               )}
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 import { 
   FileBox, 
   Scissors, 
@@ -70,30 +71,49 @@ export function Dashboard({ onToolSelect }: DashboardProps) {
     );
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.05 }
+    }
+  };
+
+  const itemVariants: any = {
+    hidden: { opacity: 0, y: 10, scale: 0.98 },
+    show: { 
+      opacity: 1, y: 0, scale: 1,
+      transition: { type: "spring", stiffness: 300, damping: 24 }
+    }
+  };
+
   return (
-    <div className="flex flex-col pb-20 p-8 max-w-2xl mx-auto gap-8 animate-in fade-in duration-500 mt-4">
-      <div className="flex flex-col text-left mb-2">
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="flex flex-col pb-20 p-8 max-w-2xl mx-auto gap-8 mt-4"
+    >
+      <motion.div variants={itemVariants} className="flex flex-col text-left mb-2">
         <h2 className="text-[28px] font-bold tracking-tight text-black dark:text-white leading-tight">
           {t('dashboard.overview')}
         </h2>
-        <p className="text-[14px] text-black/50 dark:text-white/50 mt-1">
+        <p className="text-[13px] text-black/50 dark:text-white/50 mt-1">
           {t('dashboard.subtitle')}
         </p>
-      </div>
+      </motion.div>
 
-      <div className="space-y-6">
-        <section>
-          <div className="w-full bg-white dark:bg-[#2C2C2E] rounded-xl shadow-sm border border-black/5 dark:border-white/5 overflow-hidden">
-            {coreTools.map((tool, index) => renderToolRow(tool, index === coreTools.length - 1))}
-          </div>
-        </section>
-
-        <section>
-          <div className="w-full bg-white dark:bg-[#2C2C2E] rounded-xl shadow-sm border border-black/5 dark:border-white/5 overflow-hidden">
-            {convertTools.map((tool, index) => renderToolRow(tool, index === convertTools.length - 1))}
-          </div>
-        </section>
-      </div>
-    </div>
+      <motion.div variants={itemVariants}>
+        <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl border border-black/10 dark:border-white/10 shadow-sm overflow-hidden flex flex-col">
+          {coreTools.map((tool, index) => renderToolRow(tool, index === coreTools.length - 1))}
+        </div>
+      </motion.div>
+      
+      <motion.div variants={itemVariants}>
+        <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl border border-black/10 dark:border-white/10 shadow-sm overflow-hidden flex flex-col">
+          {convertTools.map((tool, index) => renderToolRow(tool, index === convertTools.length - 1))}
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }

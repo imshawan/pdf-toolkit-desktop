@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { ChevronLeft, Trash2, Settings, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { motion, AnimatePresence } from 'framer-motion';
 import { DropZone } from '../ui/DropZone';
 import { Button } from '../ui/Button';
 import { RotatePdfTool, RotatePdfToolRef } from './RotatePdfTool';
@@ -140,16 +141,31 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
 
       {/* Main Workspace Area */}
       <div className="flex-1 p-6 overflow-hidden flex flex-col">
-        {files.length === 0 && toolId !== 'html2pdf' ? (
-          <div className="flex-1 flex flex-col mt-4 max-w-4xl mx-auto w-full">
+        <AnimatePresence mode="wait">
+          {files.length === 0 && toolId !== 'html2pdf' ? (
+            <motion.div 
+              key="dropzone"
+              initial={{ opacity: 0, scale: 0.98, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.98, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="flex-1 flex flex-col mt-4 max-w-4xl mx-auto w-full"
+            >
             <DropZone 
               onFilesDrop={handleFilesDrop} 
               accept={toolId === 'img2pdf' ? 'image/*' : toolId === 'xls2pdf' ? '.xls,.xlsx' : '.pdf'} 
               multiple={toolId === 'merge' || toolId === 'img2pdf'}
             />
-          </div>
-        ) : (
-          <div className="flex-1 rounded-2xl border border-black/5 dark:border-white/5 p-1 overflow-hidden flex flex-col">
+            </motion.div>
+          ) : (
+            <motion.div 
+              key="toolcontent"
+              initial={{ opacity: 0, scale: 0.98, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.98, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="flex-1 rounded-2xl border border-black/5 dark:border-white/5 p-1 overflow-hidden flex flex-col"
+            >
             {toolId === 'rotate' ? (
               <RotatePdfTool 
                 ref={rotateToolRef} 
@@ -235,8 +251,9 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
                 ))}
               </div>
             )}
-          </div>
+          </motion.div>
         )}
+        </AnimatePresence>
       </div>
     </div>
   );
