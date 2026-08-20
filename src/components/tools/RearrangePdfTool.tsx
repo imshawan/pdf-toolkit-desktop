@@ -1,5 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useState, useEffect, useRef } from 'react';
-import { GripHorizontal } from 'lucide-react';
+import { GripHorizontal, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import * as pdfjsLib from 'pdfjs-dist';
 import { extractPdfPages, downloadPdf, selectFolder, downloadMultiplePdfsExact } from '../../lib/pdfUtils';
@@ -41,10 +41,12 @@ const SortableCard = React.memo(function SortableCard({
   item,
   imgSrc,
   displayNumber,
+  onRemove,
 }: {
   item: PageItem;
   imgSrc: string;
   displayNumber: number;
+  onRemove: (id: string) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: item.id });
@@ -60,11 +62,23 @@ const SortableCard = React.memo(function SortableCard({
     <div
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
-      className="cursor-grab active:cursor-grabbing touch-none"
+      className="relative group touch-none"
     >
-      <PdfThumbnail imgSrc={imgSrc} pageLabel={displayNumber} />
+      <div 
+        {...attributes}
+        {...listeners}
+        className="cursor-grab active:cursor-grabbing h-full"
+      >
+        <PdfThumbnail imgSrc={imgSrc} pageLabel={displayNumber} />
+      </div>
+      <button 
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => { e.preventDefault(); onRemove(item.id); }}
+        className="absolute -top-3 -right-3 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-red-600 z-10"
+        title="Remove page"
+      >
+        <X size={14} strokeWidth={2.5} />
+      </button>
     </div>
   );
 });
@@ -147,6 +161,10 @@ export const RearrangePdfTool = forwardRef<RearrangePdfToolRef, RearrangePdfTool
           return arrayMove(prev, oldIdx, newIdx);
         });
       }
+    };
+
+    const handleRemovePage = (id: string) => {
+      setPages(prev => prev.filter(p => p.id !== id));
     };
 
     const handleCustomLocation = async () => {
@@ -307,6 +325,7 @@ export const RearrangePdfTool = forwardRef<RearrangePdfToolRef, RearrangePdfTool
                       item={page}
                       imgSrc={thumbnails[page.originalIndex]}
                       displayNumber={index + 1}
+                      onRemove={handleRemovePage}
                     />
                   ))}
                 </div>
