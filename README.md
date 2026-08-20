@@ -1,6 +1,5 @@
 <div align="center">
-  <!-- TODO: Replace with an actual logo -->
-  <img src="public/pdf-icon.png" alt="PDF Toolkit Logo" width="128" height="128" />
+  <img src="public/pdf-icon.svg" alt="PDF Toolkit Logo" width="128" height="128" />
   <h1>PDF Toolkit Desktop</h1>
   <p><b>A modern, privacy-first, cross-platform PDF manipulation and conversion suite.</b></p>
 

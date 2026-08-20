@@ -1,0 +1,183 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- macOS Blue Squircle Gradient -->
+    <linearGradient id="macBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#34C4FF" />
+      <stop offset="100%" stop-color="#0055FF" />
+    </linearGradient>
+
+    <!-- White Document Gradients for Depth -->
+    <linearGradient id="docWhiteFront" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F0F2F5" />
+    </linearGradient>
+
+    <linearGradient id="docWhiteMiddle" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E2E5EA" />
+      <stop offset="100%" stop-color="#C8CCD4" />
+    </linearGradient>
+
+    <linearGradient id="docWhiteBack" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#B0B5C0" />
+      <stop offset="100%" stop-color="#8C93A1" />
+    </linearGradient>
+
+    <!-- Red PDF Badge Gradient -->
+    <linearGradient id="pdfRed" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FF5C5C" />
+      <stop offset="100%" stop-color="#D32F2F" />
+    </linearGradient>
+
+    <!-- Tool Gradients -->
+    <linearGradient id="woodGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#A67B5B" />
+      <stop offset="40%" stop-color="#D4A373" />
+      <stop offset="100%" stop-color="#6F4E37" />
+    </linearGradient>
+
+    <linearGradient id="rubberGrip" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2C2C2C" />
+      <stop offset="50%" stop-color="#555555" />
+      <stop offset="100%" stop-color="#111111" />
+    </linearGradient>
+
+    <linearGradient id="metalChrome" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="50%" stop-color="#C5C8D1" />
+      <stop offset="100%" stop-color="#7B808F" />
+    </linearGradient>
+
+    <!-- Document Base Path (No Fold) -->
+    <g id="docShape">
+      <path d="M 0 0 h 340 l 160 160 v 490 a 16 16 0 0 1 -16 16 h -468 a 16 16 0 0 1 -16 -16 z" />
+    </g>
+
+    <!-- Fold Shape -->
+    <g id="foldShape">
+      <path d="M 340 0 v 144 a 16 16 0 0 0 16 16 h 144 z" />
+    </g>
+
+    <!-- Hammer (Apple Style) -->
+    <g id="hammerShape">
+      <rect x="-24" y="-120" width="48" height="280" rx="24" fill="url(#woodGrad)" />
+      
+      <rect x="-26" y="20" width="52" height="150" rx="12" fill="url(#rubberGrip)" />
+      <rect x="-26" y="20" width="52" height="150" rx="12" fill="none" stroke="#000000" stroke-width="2" opacity="0.3" />
+      <rect x="-28" y="45" width="56" height="8" rx="4" fill="#000000" opacity="0.6" />
+      <rect x="-28" y="75" width="56" height="8" rx="4" fill="#000000" opacity="0.6" />
+      <rect x="-28" y="105" width="56" height="8" rx="4" fill="#000000" opacity="0.6" />
+      <rect x="-28" y="135" width="56" height="8" rx="4" fill="#000000" opacity="0.6" />
+      
+      <rect x="-18" y="-170" width="36" height="60" fill="url(#metalChrome)" />
+      
+      <rect x="-55" y="-210" width="110" height="46" rx="8" fill="url(#metalChrome)" />
+      
+      <!-- Strike Face -->
+      <path d="M 55 -210 h 24 a 6 6 0 0 1 6 6 v 34 a 6 6 0 0 1 -6 6 h -24 z" fill="url(#metalChrome)" />
+      <rect x="80" y="-212" width="10" height="50" rx="4" fill="#A5A9B2" />
+      <rect x="80" y="-212" width="4" height="50" rx="2" fill="#FFFFFF" opacity="0.7" />
+      
+      <!-- Claw -->
+      <path d="M -55 -210 Q -130 -210, -140 -150 Q -110 -165, -55 -164 Z" fill="url(#metalChrome)" />
+      <path d="M -55 -205 Q -120 -205, -125 -155 Q -105 -165, -55 -164 Z" fill="url(#metalChrome)" opacity="0.4" />
+      
+      <circle cx="0" cy="-145" r="6" fill="#111111" />
+      <circle cx="0" cy="-145" r="4" fill="#333333" />
+    </g>
+
+    <!-- Chisel (Apple Developer Folder Style) -->
+    <g id="chiselShape">
+      <!-- Handle Base (Wood) -->
+      <rect x="-24" y="30" width="48" height="150" rx="20" fill="url(#woodGrad)" />
+      
+      <!-- Strike Cap (Metal end of the handle) -->
+      <rect x="-16" y="170" width="32" height="16" rx="6" fill="url(#metalChrome)" />
+      
+      <!-- Rubber Grip -->
+      <rect x="-26" y="55" width="52" height="90" rx="10" fill="url(#rubberGrip)" />
+      <rect x="-26" y="55" width="52" height="90" rx="10" fill="none" stroke="#000000" stroke-width="2" opacity="0.3" />
+      <rect x="-28" y="75" width="56" height="8" rx="4" fill="#000000" opacity="0.6" />
+      <rect x="-28" y="105" width="56" height="8" rx="4" fill="#000000" opacity="0.6" />
+      <rect x="-28" y="135" width="56" height="8" rx="4" fill="#000000" opacity="0.6" />
+
+      <!-- Ferrule (Metal band connecting handle to blade) -->
+      <rect x="-30" y="-10" width="60" height="42" rx="8" fill="url(#metalChrome)" />
+      <rect x="-30" y="-2" width="60" height="6" fill="#000000" opacity="0.25" />
+      <rect x="-30" y="20" width="60" height="6" fill="#000000" opacity="0.25" />
+
+      <!-- Main Blade Shaft (Gets slightly wider towards tip) -->
+      <path d="M -16 -10 L 16 -10 L 26 -220 L -26 -220 Z" fill="url(#metalChrome)" />
+
+      <!-- Blade Bevel (The angled cut for the sharp edge) -->
+      <path d="M -26 -170 L 26 -170 L 26 -220 L -26 -220 Z" fill="#FFFFFF" opacity="0.45" />
+      <!-- Sharp cutting edge (Line at the very top) -->
+      <rect x="-26" y="-222" width="52" height="4" fill="#FFFFFF" />
+      <rect x="-26" y="-222" width="52" height="2" fill="#FFFFFF" opacity="0.8" />
+      
+      <!-- Side bevels (For that 3D sculpted blade look) -->
+      <path d="M -16 -10 L -26 -220 L -12 -170 L -10 -10 Z" fill="#000000" opacity="0.25" />
+      <path d="M 16 -10 L 26 -220 L 12 -170 L 10 -10 Z" fill="#FFFFFF" opacity="0.7" />
+    </g>
+  </defs>
+
+  <!-- 1. macOS Squircle -->
+  <rect x="100" y="100" width="824" height="824" rx="186" fill="url(#macBlue)" />
+  <rect x="100" y="100" width="824" height="824" rx="186" fill="none" stroke="#FFFFFF" stroke-width="6" opacity="0.4" />
+  <rect x="100" y="100" width="824" height="824" rx="186" fill="none" stroke="#000000" stroke-width="2" opacity="0.15" />
+
+  <!-- 2. The Back Document (Layer 3) -->
+  <g transform="translate(160, 250) rotate(-12)">
+    <use href="#docShape" fill="#000000" opacity="0.15" transform="translate(0, 10)" />
+    <use href="#docShape" fill="url(#docWhiteBack)" stroke="#000000" stroke-width="2" stroke-opacity="0.15" />
+    <use href="#foldShape" fill="#000000" opacity="0.1" transform="translate(-4, 4)" />
+    <use href="#foldShape" fill="#FFFFFF" opacity="0.4" stroke="#000000" stroke-width="1" stroke-opacity="0.1" />
+  </g>
+
+  <!-- 3. The Middle Document (Layer 2) -->
+  <g transform="translate(220, 210) rotate(-6)">
+    <use href="#docShape" fill="#000000" opacity="0.2" transform="translate(0, 12)" />
+    <use href="#docShape" fill="url(#docWhiteMiddle)" stroke="#000000" stroke-width="2" stroke-opacity="0.1" />
+    <use href="#foldShape" fill="#000000" opacity="0.1" transform="translate(-4, 4)" />
+    <use href="#foldShape" fill="#FFFFFF" opacity="0.7" stroke="#000000" stroke-width="1" stroke-opacity="0.1" />
+  </g>
+
+  <!-- 4. The Front Document (Layer 1) -->
+  <g transform="translate(280, 170)">
+    <use href="#docShape" fill="#000000" opacity="0.25" transform="translate(0, 20)" />
+    <use href="#docShape" fill="#000000" opacity="0.15" transform="translate(0, 40)" />
+    <use href="#docShape" fill="url(#docWhiteFront)" stroke="#000000" stroke-width="2" stroke-opacity="0.08" />
+    <use href="#foldShape" fill="#000000" opacity="0.08" transform="translate(-4, 4)" />
+    <use href="#foldShape" fill="#FFFFFF" stroke="#000000" stroke-width="1" stroke-opacity="0.05" />
+
+    <!-- Mock Text Lines -->
+    <rect x="70" y="210" width="300" height="18" rx="9" fill="#000000" opacity="0.05" />
+    <rect x="70" y="260" width="380" height="18" rx="9" fill="#000000" opacity="0.05" />
+    <rect x="70" y="310" width="380" height="18" rx="9" fill="#000000" opacity="0.05" />
+    <rect x="70" y="360" width="240" height="18" rx="9" fill="#000000" opacity="0.05" />
+
+    <!-- Red PDF Badge -->
+    <g transform="translate(70, 70)">
+      <rect x="0" y="0" width="160" height="70" rx="16" fill="#000000" opacity="0.15" transform="translate(0, 8)" />
+      <rect x="0" y="0" width="160" height="70" rx="16" fill="url(#pdfRed)" />
+      <rect x="0" y="0" width="160" height="70" rx="16" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.3" />
+      <text x="80" y="35" dominant-baseline="central" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="36" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">PDF</text>
+    </g>
+  </g>
+
+  <!-- 5. Apple Developer Tools (Crossed Chisel & Hammer) -->
+  
+  <!-- BOTTOM TOOL: The Chisel (Rotated +45 degrees) -->
+  <!-- Chisel Shadow (Casts onto document) -->
+  <use href="#chiselShape" fill="#000000" opacity="0.2" transform="translate(620, 680) rotate(45) translate(0, 20)" />
+  <use href="#chiselShape" fill="#000000" opacity="0.1" transform="translate(620, 680) rotate(45) translate(0, 40)" />
+  <!-- Chisel Body -->
+  <use href="#chiselShape" stroke="#000000" stroke-width="1" stroke-opacity="0.3" transform="translate(620, 680) rotate(45)" />
+
+  <!-- TOP TOOL: The Hammer (Rotated -45 degrees) -->
+  <!-- Hammer Shadow (Casts onto document AND crosses over the chisel perfectly) -->
+  <use href="#hammerShape" fill="#000000" opacity="0.2" transform="translate(620, 680) rotate(-45) translate(0, 20)" />
+  <use href="#hammerShape" fill="#000000" opacity="0.1" transform="translate(620, 680) rotate(-45) translate(0, 40)" />
+  <!-- Hammer Body -->
+  <use href="#hammerShape" stroke="#000000" stroke-width="1" stroke-opacity="0.3" transform="translate(620, 680) rotate(-45)" />
+
+</svg>
