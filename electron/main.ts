@@ -102,7 +102,7 @@ function setupMenu() {
     version: '1.0.0',
     copyright: '© 2026 PDF Toolkit',
     authors: ['Shawan Mandal'],
-    website: 'https://github.com/imshawan',
+    website: 'https://github.com/imshawan/pdf-toolkit-desktop',
     iconPath: path.join(process.env.VITE_PUBLIC, 'pdf-icon.png') // Linux/Windows fallback icon
   });
 

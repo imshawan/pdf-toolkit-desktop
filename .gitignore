@@ -144,3 +144,4 @@ package-lock.json
 .tanstack
 .idea
 .DS_Store
+release/*
