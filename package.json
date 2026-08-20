@@ -51,5 +51,37 @@
     "vite-plugin-electron": "^0.28.6",
     "vite-plugin-electron-renderer": "^0.14.5"
   },
-  "main": "dist-electron/main.js"
+  "main": "dist-electron/main.js",
+  "productName": "PDF Toolkit",
+  "description": "A modern, native macOS-style PDF utility application.",
+  "author": "Shawan Mandal",
+  "build": {
+    "appId": "com.imshawan.pdftoolkit",
+    "productName": "PDF Toolkit",
+    "directories": {
+      "output": "release"
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "icon": "build/icon.icns"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "zip"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "tar.gz"
+      ],
+      "icon": "build/icon.png"
+    }
+  }
 }

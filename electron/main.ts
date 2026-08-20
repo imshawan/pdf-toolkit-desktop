@@ -54,7 +54,7 @@ function createWindow() {
     visualEffectState: 'active',
     backgroundColor: '#00000000',
     transparent: true,
-    icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+    icon: path.join(process.env.VITE_PUBLIC, 'pdf-icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
     },
@@ -103,7 +103,7 @@ function setupMenu() {
     copyright: '© 2026 PDF Toolkit',
     authors: ['Shawan Mandal'],
     website: 'https://github.com/imshawan',
-    iconPath: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg') // Linux/Windows fallback icon
+    iconPath: path.join(process.env.VITE_PUBLIC, 'pdf-icon.png') // Linux/Windows fallback icon
   });
 
   const template: MenuItemConstructorOptions[] = [

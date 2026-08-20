@@ -1,5 +1,4 @@
 import React from 'react';
-import { User } from 'lucide-react';
 import pkg from '../../package.json';
 
 interface AppHeaderProps {
@@ -10,17 +9,14 @@ export function AppHeader({ appName = pkg.displayName || pkg.name }: AppHeaderPr
   const version = `v${pkg.version || "1.0.0"}`;
 
   return (
-    <div className="flex items-center gap-3 py-4 rounded-xl transition-colors w-full" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
-      <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#8E8E93] to-[#5C5C60] text-white shadow-sm ring-1 ring-black/10 dark:ring-white/10">
-        <User size={24} strokeWidth={1.5} />
-      </div>
-      <div className="flex flex-col overflow-hidden">
-        <h1 className="text-[14px] font-bold tracking-tight text-black dark:text-white truncate">
+    <div className="flex flex-col justify-center py-4 w-full" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
+      <div className="flex items-center gap-2">
+        <h1 className="text-lg font-bold tracking-tight text-black dark:text-white truncate">
           {appName}
         </h1>
-        <p className="text-[11px] text-black/50 dark:text-white/50 truncate">
+        <span className="px-1.5 py-0.5 rounded-md bg-black/5 dark:bg-white/10 text-[10px] font-medium text-black/60 dark:text-white/60 ring-1 ring-black/5 dark:ring-white/10">
           {version}
-        </p>
+        </span>
       </div>
     </div>
   );
