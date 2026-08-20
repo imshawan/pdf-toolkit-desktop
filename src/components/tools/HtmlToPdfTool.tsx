@@ -22,7 +22,7 @@ export const HtmlToPdfTool = forwardRef<HtmlToPdfToolRef, HtmlToPdfToolProps>(({
   const [mode, setMode] = useState<'url' | 'file'>('url');
   const [url, setUrl] = useState('');
   
-  const [saveLocation, setSaveLocation] = useState<'original' | 'custom'>('custom');
+  const [saveLocation, setSaveLocation] = useState<'original' | 'custom'>('original');
   const [customLocationPath, setCustomLocationPath] = useState<string>('');
   const [outputFilename, setOutputFilename] = useState<string>('');
 
