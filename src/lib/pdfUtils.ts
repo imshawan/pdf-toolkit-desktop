@@ -409,9 +409,16 @@ export async function unlockPdf(pdfBytes: Uint8Array, password: string): Promise
  * @param isUrl Whether the source is a URL (true) or a file path (false).
  * @returns The converted PDF as a Uint8Array.
  */
-export async function convertHtmlToPdf(source: string, isUrl: boolean): Promise<Uint8Array> {
+export interface HtmlToPdfOptions {
+  landscape?: boolean;
+  pageSize?: 'A3' | 'A4' | 'A5' | 'Legal' | 'Letter' | 'Tabloid';
+  scale?: number;
+  marginMm?: number;
+}
+
+export async function convertHtmlToPdf(source: string, isUrl: boolean, options: HtmlToPdfOptions = {}): Promise<Uint8Array> {
   if (window.ipcRenderer) {
-    const buffer = await window.ipcRenderer.invoke('file:html-to-pdf', source, isUrl);
+    const buffer = await window.ipcRenderer.invoke('file:html-to-pdf', source, isUrl, options);
     return new Uint8Array(buffer);
   }
   throw new Error('HTML to PDF conversion is only supported in the desktop app.');

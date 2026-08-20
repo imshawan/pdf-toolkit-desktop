@@ -120,10 +120,12 @@ export const saveMultiplePdfs = async (_event: IpcMainInvokeEvent, files: { buff
   return { success: true, savedPaths };
 };
 
-export const htmlToPdf = async (_event: IpcMainInvokeEvent, source: string, isUrl: boolean) => {
+export const htmlToPdf = async (_event: IpcMainInvokeEvent, source: string, isUrl: boolean, options: any = {}) => {
   return new Promise((resolve, reject) => {
     let win = new BrowserWindow({
       show: false,
+      width: 1280, // Set a wide desktop viewport
+      height: 800,
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true,
@@ -132,9 +134,29 @@ export const htmlToPdf = async (_event: IpcMainInvokeEvent, source: string, isUr
 
     win.webContents.on('did-finish-load', async () => {
       try {
+        const marginCss = options.marginMm !== undefined ? `${options.marginMm}mm !important` : 'auto';
+        await win.webContents.insertCSS(`
+          @media print {
+            @page {
+              margin: ${marginCss};
+            }
+            body {
+              margin: 0 !important;
+              padding: 0 !important;
+            }
+            body, html, div, table, tbody, thead, tr, td, th, section, main, article {
+              overflow: visible !important;
+              overflow-x: visible !important;
+              overflow-y: visible !important;
+            }
+          }
+        `);
+
         const pdfBuffer = await win.webContents.printToPDF({
           printBackground: true,
-          pageSize: 'A4',
+          pageSize: options.pageSize || 'A4',
+          landscape: options.landscape || false,
+          scale: options.scale || 1.0,
           margins: { marginType: 'default' },
         });
         resolve(pdfBuffer);

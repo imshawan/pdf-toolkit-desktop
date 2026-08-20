@@ -1,9 +1,11 @@
-import { useState, forwardRef, useImperativeHandle, useMemo } from 'react';
-import { Globe, FileCode } from 'lucide-react';
+import { useState, forwardRef, useImperativeHandle, useMemo, useEffect } from 'react';
+import { Globe, FileCode, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { convertHtmlToPdf, selectFolder, downloadMultiplePdfsExact, downloadPdf } from '../../lib/pdfUtils';
 import { DropZone } from '../ui/DropZone';
+import * as pdfjsLib from 'pdfjs-dist';
+import { prerenderAllPages, revokeAllThumbnails } from './PdfThumbnail';
 
 export interface HtmlToPdfToolRef {
   processAndDownload: () => Promise<void>;
@@ -25,6 +27,11 @@ export const HtmlToPdfTool = forwardRef<HtmlToPdfToolRef, HtmlToPdfToolProps>(({
   const [saveLocation, setSaveLocation] = useState<'original' | 'custom'>('original');
   const [customLocationPath, setCustomLocationPath] = useState<string>('');
   const [outputFilename, setOutputFilename] = useState<string>('');
+  const [landscape, setLandscape] = useState<boolean>(false);
+  const [pageSize, setPageSize] = useState<'A4' | 'A3' | 'Letter' | 'Legal'>('A4');
+  const [scale, setScale] = useState<number>(100);
+  const [margin, setMargin] = useState<number>(10);
+
 
   const handleCustomLocation = async () => {
     const folder = await selectFolder();
@@ -78,7 +85,7 @@ export const HtmlToPdfTool = forwardRef<HtmlToPdfToolRef, HtmlToPdfToolProps>(({
         const finalFilename = outputFilename || defaultFilename;
         
         toast.loading('Converting to PDF...', { id: 'html2pdf' });
-        const finalBytes = await convertHtmlToPdf(source, mode === 'url');
+        const finalBytes = await convertHtmlToPdf(source, mode === 'url', { landscape, pageSize: pageSize as any, scale: scale / 100.0, marginMm: margin });
         toast.success('Conversion successful!', { id: 'html2pdf' });
 
         let result;
@@ -108,6 +115,59 @@ export const HtmlToPdfTool = forwardRef<HtmlToPdfToolRef, HtmlToPdfToolProps>(({
       }
     }
   }));
+
+
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      revokeAllThumbnails(previewImages);
+    };
+  }, [previewImages]);
+
+  useEffect(() => {
+    let active = true;
+    const generatePreview = async () => {
+      if (mode === 'url' && url.trim().length < 5) {
+        setPreviewImages([]);
+        return;
+      }
+      if (mode === 'file' && files.length === 0) {
+        setPreviewImages([]);
+        return;
+      }
+      
+      setIsPreviewLoading(true);
+      try {
+        let source = '';
+        if (mode === 'url') {
+           let parsedUrl = url.trim();
+           if (!parsedUrl.startsWith('http')) parsedUrl = 'https://' + parsedUrl;
+           source = parsedUrl;
+        } else {
+           source = files[0].path;
+        }
+        const bytes = await convertHtmlToPdf(source, mode === 'url', { landscape, pageSize: pageSize as any, scale: scale / 100.0, marginMm: margin });
+        if (active) {
+           const loadingTask = pdfjsLib.getDocument({ data: bytes.slice() });
+           const pdfDoc = await loadingTask.promise;
+           const images = await prerenderAllPages(pdfDoc, 600);
+           setPreviewImages(images);
+        }
+      } catch (err) {
+        console.error('Preview error', err);
+      } finally {
+        if (active) setIsPreviewLoading(false);
+      }
+    };
+    
+    const timeout = setTimeout(generatePreview, 800);
+    return () => {
+      active = false;
+      clearTimeout(timeout);
+    };
+  }, [mode, url, files, landscape, pageSize, scale, margin]);
 
   const filePreviewUrl = useMemo(() => {
     if (files.length > 0 && mode === 'file') return URL.createObjectURL(files[0]);
@@ -201,9 +261,46 @@ export const HtmlToPdfTool = forwardRef<HtmlToPdfToolRef, HtmlToPdfToolProps>(({
               )}
             </div>
           )}
+
+          <div className="flex flex-col gap-4 mt-6 border-t border-black/5 dark:border-white/5 pt-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[13px] font-medium text-black/80 dark:text-white/80 mb-2">Page Size</label>
+                <select value={pageSize} onChange={e => setPageSize(e.target.value as any)} className="w-full px-3 py-2 bg-white dark:bg-[#1C1C1E] border border-black/10 dark:border-white/10 rounded-lg text-[13px] focus:outline-none">
+                  <option value="A4">A4</option>
+                  <option value="A3">A3 (Wide)</option>
+                  <option value="Letter">Letter</option>
+                  <option value="Legal">Legal</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-[13px] font-medium text-black/80 dark:text-white/80 mb-2">Orientation</label>
+                <select value={landscape ? 'landscape' : 'portrait'} onChange={e => setLandscape(e.target.value === 'landscape')} className="w-full px-3 py-2 bg-white dark:bg-[#1C1C1E] border border-black/10 dark:border-white/10 rounded-lg text-[13px] focus:outline-none">
+                  <option value="portrait">Portrait</option>
+                  <option value="landscape">Landscape</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between mb-2">
+                <label className="block text-[13px] font-medium text-black/80 dark:text-white/80">Scale (%)</label>
+                <span className="text-[12px] text-black/50 dark:text-white/50">{scale}%</span>
+              </div>
+              <input type="range" min="25" max="200" value={scale} onChange={e => setScale(Number(e.target.value))} className="w-full accent-[#0071e3]" />
+              <p className="text-[11px] text-black/40 dark:text-white/40 mt-1">Reduce scale if tables are cut off</p>
+            </div>
+            <div>
+              <div className="flex justify-between mb-2">
+                <label className="block text-[13px] font-medium text-black/80 dark:text-white/80">Margin (mm)</label>
+                <span className="text-[12px] text-black/50 dark:text-white/50">{margin}mm</span>
+              </div>
+              <input type="range" min="0" max="40" step="1" value={margin} onChange={e => setMargin(Number(e.target.value))} className="w-full accent-[#0071e3]" />
+            </div>
+          </div>
         </div>
 
-        <div className="border-t border-black/5 dark:border-white/5 p-4 shrink-0 bg-[#F5F5F7] dark:bg-[#252525]">
+
+          <div className="border-t border-black/5 dark:border-white/5 p-4 shrink-0 bg-[#F5F5F7] dark:bg-[#252525]">
             <label className="block text-[13px] font-medium text-black/80 dark:text-white/80 mb-2">
               Output Filename
             </label>
@@ -258,18 +355,27 @@ export const HtmlToPdfTool = forwardRef<HtmlToPdfToolRef, HtmlToPdfToolProps>(({
 
       {/* Right Pane: Preview */}
       <div className="flex-1 bg-black/5 dark:bg-black/20 p-4 relative flex items-center justify-center">
-        {(mode === 'url' && url) ? (
-          <iframe 
-            src={url.startsWith('http') ? url : `https://${url}`} 
-            className="w-full h-full rounded-xl shadow-md bg-white border border-black/10 dark:border-white/10"
-            sandbox="allow-same-origin allow-scripts"
-          />
-        ) : (mode === 'file' && filePreviewUrl) ? (
-          <iframe 
-            src={filePreviewUrl} 
-            className="w-full h-full rounded-xl shadow-md bg-white border border-black/10 dark:border-white/10"
-            sandbox="allow-same-origin allow-scripts"
-          />
+        {isPreviewLoading && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 dark:bg-black/50 backdrop-blur-sm transition-opacity duration-200 m-4 rounded-xl">
+            <div className="bg-white dark:bg-[#252525] p-5 rounded-2xl shadow-xl flex flex-col items-center gap-3">
+              <Loader2 size={28} className="animate-spin text-[#0071e3]" />
+              <span className="text-[13px] font-medium text-black/70 dark:text-white/70">Generating preview...</span>
+            </div>
+          </div>
+        )}
+        
+        {previewImages.length > 0 ? (
+          <div className="w-full h-full overflow-y-auto px-4 py-8 flex flex-col items-center gap-6 rounded-xl border border-black/10 dark:border-white/10">
+            {previewImages.map((src, i) => (
+              <img 
+                key={i} 
+                src={src} 
+                alt={'Page ' + (i+1)} 
+                className="max-w-full h-auto bg-white shadow-[0_4px_12px_rgba(0,0,0,0.1)] border border-black/5 rounded-sm" 
+                style={{ width: '600px' }}
+              />
+            ))}
+          </div>
         ) : (
           <div className="bg-white dark:bg-[#252525] p-8 rounded-3xl shadow-sm border border-black/5 dark:border-white/5 flex flex-col items-center gap-4 text-center max-w-sm">
             <div className="w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center">
@@ -278,7 +384,7 @@ export const HtmlToPdfTool = forwardRef<HtmlToPdfToolRef, HtmlToPdfToolProps>(({
             <div>
               <h3 className="text-lg font-semibold text-black dark:text-white mb-1">Web to PDF</h3>
               <p className="text-[13px] text-black/60 dark:text-white/60">
-                Enter a URL or upload an HTML file on the left to convert it into a high-quality PDF.
+                Enter a URL or upload an HTML file on the left to instantly preview the generated PDF.
               </p>
             </div>
           </div>
