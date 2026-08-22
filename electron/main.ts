@@ -79,13 +79,12 @@ function setupIpcHandlers() {
 
 function createWindow() {
   win = new BrowserWindow({
-    width: 1000,
-    height: 700,
+    width: 1280,
+    height: 800,
     minWidth: 800,
     minHeight: 500,
     resizable: true,
     maximizable: true,
-    autoHideMenuBar: true,
     ...(isMac ? {
       titleBarStyle: 'hiddenInset',
       vibrancy: 'sidebar',
@@ -93,6 +92,7 @@ function createWindow() {
       backgroundColor: '#00000000',
       transparent: true,
     } : {
+      autoHideMenuBar: true,
       titleBarStyle: 'hidden',
       titleBarOverlay: isWin ? getTitleBarOverlayOptions() : false,
       backgroundColor: getWindowBackgroundColor(),

@@ -15,7 +15,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
 
   return (
     <aside 
-      className={`flex flex-col w-[220px] h-full overflow-hidden ${
+      className={`flex flex-col w-[220px] min-[1000px]:w-[240px] min-[1200px]:w-[260px] min-[1800px]:w-[280px] shrink-0 transition-[width] duration-300 ease-in-out h-full overflow-hidden ${
         isMac 
           ? 'bg-white/50 dark:bg-transparent' 
           : 'bg-[#EDEDED] dark:bg-[#18181b] border-r border-black/10 dark:border-white/10'
