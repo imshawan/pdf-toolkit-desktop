@@ -1,5 +1,13 @@
 {
   "translation": {
+    "menu": {
+      "file": "文件",
+      "edit": "编辑",
+      "view": "视图",
+      "window": "窗口",
+      "help": "帮助",
+      "about": "关于 PDF Toolkit"
+    },
     "app": {
       "title": "PDF 工具",
       "description": "本地 PDF 处理工具"

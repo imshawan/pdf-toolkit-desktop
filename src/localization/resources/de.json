@@ -1,5 +1,13 @@
 {
   "translation": {
+    "menu": {
+      "file": "Datei",
+      "edit": "Bearbeiten",
+      "view": "Ansicht",
+      "window": "Fenster",
+      "help": "Hilfe",
+      "about": "Über PDF Toolkit"
+    },
     "app": {
       "title": "PDF Tools",
       "description": "Lokale PDF-Dienstprogramme"

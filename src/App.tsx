@@ -21,6 +21,22 @@ function App() {
     i18n.changeLanguage(language);
   }, [language, i18n]);
 
+
+  // Sync Native OS Menu Bar Language
+  useEffect(() => {
+    // We send an IPC message to the Main Process to rebuild the top native menu
+    if (window.ipcRenderer) {
+      window.ipcRenderer.send("set-menu-translations", {
+        file: i18n.t("menu.file", "File"),
+        edit: i18n.t("menu.edit", "Edit"),
+        view: i18n.t("menu.view", "View"),
+        window: i18n.t("menu.window", "Window"),
+        help: i18n.t("menu.help", "Help"),
+        about: i18n.t("menu.about", "About PDF Toolkit")
+      });
+    }
+  }, [i18n.language]);
+
   // Sync Theme
   useEffect(() => {
     const root = window.document.documentElement;

@@ -91,19 +91,29 @@ app.on('activate', () => {
   }
 })
 
-function setupMenu() {
-  const isMac = process.platform === 'darwin'
-  const appName = 'PDF Toolkit'
 
-  // Customize the About panel (works natively on macOS, and via app.showAboutPanel() on Win/Linux)
+let currentMenuTranslations = {
+  file: "File",
+  edit: "Edit",
+  view: "View",
+  window: "Window",
+  help: "Help",
+  about: "About PDF Toolkit"
+};
+
+function setupMenu(translations = currentMenuTranslations) {
+  currentMenuTranslations = translations;
+  const isMac = process.platform === "darwin";
+  const appName = "PDF Toolkit";
+
   app.setAboutPanelOptions({
     applicationName: appName,
-    applicationVersion: '1.0.0',
-    version: '1.0.0',
-    copyright: '© 2026 PDF Toolkit',
-    authors: ['Shawan Mandal'],
-    website: 'https://github.com/imshawan/pdf-toolkit-desktop',
-    iconPath: path.join(process.env.VITE_PUBLIC, 'pdf-icon.png') // Linux/Windows fallback icon
+    applicationVersion: "1.0.0",
+    version: "1.0.0",
+    copyright: "© 2026 PDF Toolkit",
+    authors: ["Shawan Mandal"],
+    website: "https://github.com/imshawan/pdf-toolkit-desktop",
+    iconPath: path.join(process.env.VITE_PUBLIC, "pdf-icon.png")
   });
 
   const template: MenuItemConstructorOptions[] = [
@@ -111,93 +121,96 @@ function setupMenu() {
       ? [{
           label: appName,
           submenu: [
-            { role: 'about' },
-            { type: 'separator' },
-            { role: 'services' },
-            { type: 'separator' },
-            { role: 'hide' },
-            { role: 'hideOthers' },
-            { role: 'unhide' },
-            { type: 'separator' },
-            { role: 'quit' }
+            { role: "about", label: translations.about },
+            { type: "separator" },
+            { role: "services" },
+            { type: "separator" },
+            { role: "hide" },
+            { role: "hideOthers" },
+            { role: "unhide" },
+            { type: "separator" },
+            { role: "quit" }
           ]
         }] as MenuItemConstructorOptions[]
       : []),
     {
-      label: 'File',
+      label: translations.file,
       submenu: [
-        isMac ? { role: 'close' } : { role: 'quit' }
-      ]
+        isMac ? { role: "close" } : { role: "quit" }
+      ] as MenuItemConstructorOptions[]
     },
     {
-      label: 'Edit',
+      label: translations.edit,
       submenu: [
-        { role: 'undo' },
-        { role: 'redo' },
-        { type: 'separator' },
-        { role: 'cut' },
-        { role: 'copy' },
-        { role: 'paste' },
+        { role: "undo" },
+        { role: "redo" },
+        { type: "separator" },
+        { role: "cut" },
+        { role: "copy" },
+        { role: "paste" },
         ...(isMac
           ? [
-              { role: 'pasteAndMatchStyle' },
-              { role: 'delete' },
-              { role: 'selectAll' }
+              { role: "pasteAndMatchStyle" },
+              { role: "delete" },
+              { role: "selectAll" }
             ]
           : [
-              { role: 'delete' },
-              { type: 'separator' },
-              { role: 'selectAll' }
+              { role: "delete" },
+              { type: "separator" },
+              { role: "selectAll" }
             ]) as MenuItemConstructorOptions[]
-      ]
+      ] as MenuItemConstructorOptions[]
     },
     {
-      label: 'View',
+      label: translations.view,
       submenu: [
-        { role: 'reload' },
-        { role: 'forceReload' },
-        { role: 'toggleDevTools' },
-        { type: 'separator' },
-        { role: 'resetZoom' },
-        { role: 'zoomIn' },
-        { role: 'zoomOut' },
-        { type: 'separator' },
-        { role: 'togglefullscreen' }
-      ]
+        { role: "reload" },
+        { role: "forceReload" },
+        { role: "toggleDevTools" },
+        { type: "separator" },
+        { role: "resetZoom" },
+        { role: "zoomIn" },
+        { role: "zoomOut" },
+        { type: "separator" },
+        { role: "togglefullscreen" }
+      ] as MenuItemConstructorOptions[]
     },
     {
-      label: 'Window',
+      label: translations.window,
       submenu: [
-        { role: 'minimize' },
-        { role: 'zoom' },
+        { role: "minimize" },
+        { role: "zoom" },
         ...(isMac
           ? [
-              { type: 'separator' },
-              { role: 'front' }
+              { type: "separator" },
+              { role: "front" }
             ]
           : [
-              { role: 'close' }
+              { role: "close" }
             ]) as MenuItemConstructorOptions[]
-      ]
+      ] as MenuItemConstructorOptions[]
     },
     {
-      label: 'Help',
-      role: 'help',
+      label: translations.help,
+      role: "help",
       submenu: [
         {
-          label: `About ${appName}`,
+          label: translations.about,
           click: () => {
             app.showAboutPanel();
           }
         }
-      ]
+      ] as MenuItemConstructorOptions[]
     }
-  ]
+  ];
 
-  const menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
 }
 
+ipcMain.on("set-menu-translations", (_event, translations) => {
+  setupMenu(translations);
+});
 app.whenReady().then(() => {
   setupMenu();
   setupIpcHandlers();

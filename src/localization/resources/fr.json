@@ -1,5 +1,13 @@
 {
   "translation": {
+    "menu": {
+      "file": "Fichier",
+      "edit": "Édition",
+      "view": "Affichage",
+      "window": "Fenêtre",
+      "help": "Aide",
+      "about": "À propos de PDF Toolkit"
+    },
     "app": {
       "title": "PDF Tools",
       "description": "Utilitaires PDF à traitement local"

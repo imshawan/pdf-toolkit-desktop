@@ -5,6 +5,14 @@ import translations from "./resources";
 const resources = {
   "en": {
     "translation": {
+      "menu": {
+        "file": "File",
+        "edit": "Edit",
+        "view": "View",
+        "window": "Window",
+        "help": "Help",
+        "about": "About PDF Toolkit"
+      },
       "app": {
         "title": "PDF Tools",
         "description": "Local Processing PDF Utilities"
@@ -102,6 +110,14 @@ const resources = {
   },
   "hi": {
     "translation": {
+      "menu": {
+        "file": "फ़ाइल",
+        "edit": "संपादित करें",
+        "view": "देखें",
+        "window": "विंडो",
+        "help": "मदद",
+        "about": "PDF Toolkit के बारे में"
+      },
       "app": {
         "title": "पीडीएफ टूल्स",
         "description": "स्थानीय पीडीएफ उपयोगिताएँ"
