@@ -6,38 +6,8 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { Rnd } from 'react-rnd';
 import { Button } from '../ui/Button';
 import { motion, AnimatePresence } from 'framer-motion';
-
-
-// Rasterize text to a high-res transparent PNG to guarantee absolute 1:1 parity between browser kerning/fonts and the PDF.
-const rasterizeTextToDataURL = (text: string, fontFamily: string, color: string) => {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-  
-  // Use a very high base font size to ensure crisp PDF rendering
-  const fontSize = 300;
-  ctx.font = `${fontSize}px "${fontFamily}"`;
-  
-  const metrics = ctx.measureText(text);
-  const width = Math.ceil(metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight) + 10;
-  const height = Math.ceil(metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent) + 10;
-  
-  // If the text is empty or measuring failed, return empty transparent pixel
-  if (width <= 10 || height <= 10) return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
-
-  canvas.width = width;
-  canvas.height = height;
-  
-  // Re-apply font since changing canvas dimensions resets context
-  ctx.font = `${fontSize}px "${fontFamily}"`;
-  ctx.fillStyle = color;
-  ctx.textBaseline = 'alphabetic';
-  
-  // Draw text perfectly aligned using alphabetic baseline
-  ctx.fillText(text, Math.ceil(metrics.actualBoundingBoxLeft) + 5, Math.ceil(metrics.actualBoundingBoxAscent) + 5);
-  
-  return canvas.toDataURL('image/png');
-};
-
+import { useTranslation } from 'react-i18next';
+import { rasterizeTextToDataURL } from '@/lib/imageUtils';
 
 export interface WatermarkPdfToolRef {
   processAndDownload: () => Promise<void>;
@@ -58,6 +28,8 @@ interface SavedWatermark {
 }
 
 export const WatermarkPdfTool = forwardRef<WatermarkPdfToolRef, WatermarkPdfToolProps>(({ files, onProcessingChange }, ref) => {
+  const { t } = useTranslation();
+  
   const [overlays, setOverlays] = useState<OverlayData[]>([]);
   const [savedWatermarks, setSavedWatermarks] = useState<SavedWatermark[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -572,7 +544,7 @@ export const WatermarkPdfTool = forwardRef<WatermarkPdfToolRef, WatermarkPdfTool
           
           {overlays.length === 0 ? (
             <div className="p-4 border border-dashed border-black/10 dark:border-white/10 rounded-xl bg-black/[0.02] dark:bg-white/[0.02] text-center">
-              <p className="text-[13px] text-black/50 dark:text-white/50">No watermarks added yet.</p>
+              <p className="text-[13px] text-black/50 dark:text-white/50">{t("tools.noWatermarks", "No watermarks added yet.")}</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -619,7 +591,7 @@ export const WatermarkPdfTool = forwardRef<WatermarkPdfToolRef, WatermarkPdfTool
             <input type="range" min="-180" max="180" step="1" value={rotation} onChange={(e) => setRotation(parseInt(e.target.value))} className="w-24 accent-blue-500" />
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-[12px] font-medium text-black/70 dark:text-white/70">Apply to all pages</label>
+            <label className="text-[12px] font-medium text-black/70 dark:text-white/70">{t("tools.applyToAll", "Apply to all pages")}</label>
             <input type="checkbox" checked={applyToAllPages} onChange={(e) => setApplyToAllPages(e.target.checked)} className="w-4 h-4 accent-blue-500 rounded" />
           </div>
         </div>
@@ -742,7 +714,7 @@ export const WatermarkPdfTool = forwardRef<WatermarkPdfToolRef, WatermarkPdfTool
               ))}
             </div>
           ) : (
-            <div className="m-auto text-sm text-black/50 dark:text-white/50 animate-pulse">Loading document...</div>
+            <div className="m-auto text-sm text-black/50 dark:text-white/50 animate-pulse">{t("tools.loadingDocument", "Loading document...")}</div>
           )}
         </div>
       </div>
@@ -803,8 +775,8 @@ export const WatermarkPdfTool = forwardRef<WatermarkPdfToolRef, WatermarkPdfTool
                       onTouchEnd={stopDrawing}
                     />
                     <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center pointer-events-none">
-                      <span className="text-[11px] font-medium text-black/30 dark:text-white/30 uppercase tracking-wider">Draw here</span>
-                      <button onClick={(e) => { e.stopPropagation(); clearWatermark(); }} className="text-[11px] font-semibold text-black/50 dark:text-white/50 hover:text-red-500 pointer-events-auto bg-white/80 dark:bg-black/80 px-2 py-1 rounded">Clear</button>
+                      <span className="text-[11px] font-medium text-black/30 dark:text-white/30 uppercase tracking-wider">{t("tools.drawHere", "Draw here")}</span>
+                      <button onClick={(e) => { e.stopPropagation(); clearWatermark(); }} className="text-[11px] font-semibold text-black/50 dark:text-white/50 hover:text-red-500 pointer-events-auto bg-white/80 dark:bg-black/80 px-2 py-1 rounded">{t("tools.clear", "Clear")}</button>
                     </div>
                   </div>
                 </>
@@ -813,7 +785,7 @@ export const WatermarkPdfTool = forwardRef<WatermarkPdfToolRef, WatermarkPdfTool
               {watermarkMode === 'type' && (
                 <div className="flex-1 flex flex-col min-h-0 space-y-5">
                   <div className="shrink-0">
-                    <label className="block text-[12px] font-medium text-black/60 dark:text-white/60 mb-2">Your Name</label>
+                    <label className="block text-[12px] font-medium text-black/60 dark:text-white/60 mb-2">{t("tools.yourName", "Your Name")}</label>
                     <input 
                       type="text" 
                       value={typedName}
@@ -823,7 +795,7 @@ export const WatermarkPdfTool = forwardRef<WatermarkPdfToolRef, WatermarkPdfTool
                     />
                   </div>
                   <div className="flex-1 flex flex-col min-h-0">
-                    <label className="block text-[12px] font-medium text-black/60 dark:text-white/60 mb-2 shrink-0">Select Style</label>
+                    <label className="block text-[12px] font-medium text-black/60 dark:text-white/60 mb-2 shrink-0">{t("tools.selectStyle", "Select Style")}</label>
                     <div className="grid grid-cols-1 gap-2 overflow-y-auto flex-1 pr-2 pb-2">
                       {fonts.map(f => (
                         <button
@@ -845,8 +817,8 @@ export const WatermarkPdfTool = forwardRef<WatermarkPdfToolRef, WatermarkPdfTool
               {watermarkMode === 'upload' && (
                 <div className="flex-1 flex flex-col items-center justify-center min-h-0 border-2 border-dashed border-black/10 dark:border-white/10 rounded-xl bg-[#F9F9F9] dark:bg-[#1E1E1E] hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer" onClick={() => document.getElementById('sig-upload')?.click()}>
                   <Upload size={32} className="text-black/30 dark:text-white/30 mb-3" />
-                  <span className="text-[14px] font-medium text-black/70 dark:text-white/70">Click to upload image</span>
-                  <span className="text-[12px] text-black/40 dark:text-white/40 mt-1">PNG or JPEG format</span>
+                  <span className="text-[14px] font-medium text-black/70 dark:text-white/70">{t('common.clickToUpload', 'Click to upload image')}</span>
+                  <span className="text-[12px] text-black/40 dark:text-white/40 mt-1">{t("tools.pngJpegFormat", "PNG or JPEG format")}</span>
                   <input id="sig-upload" type="file" className="hidden" accept=".png,.jpg,.jpeg" onChange={handleFileUpload} />
                 </div>
               )}

@@ -95,14 +95,14 @@ export function Dashboard({ onToolSelect }: DashboardProps) {
       </motion.div>
 
       <motion.div variants={itemVariants} className="flex flex-col gap-4">
-        <h3 className="text-[15px] font-bold text-black/60 dark:text-white/60 uppercase tracking-wider ml-2">Core Tools</h3>
+        <h3 className="text-[15px] font-bold text-black/60 dark:text-white/60 uppercase tracking-wider ml-2">{t('dashboard.coreTools', 'Core Tools')}</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {coreTools.map((tool) => renderToolCard(tool))}
         </div>
       </motion.div>
       
       <motion.div variants={itemVariants} className="flex flex-col gap-4">
-        <h3 className="text-[15px] font-bold text-black/60 dark:text-white/60 uppercase tracking-wider ml-2">Conversion</h3>
+        <h3 className="text-[15px] font-bold text-black/60 dark:text-white/60 uppercase tracking-wider ml-2">{t('dashboard.conversion', 'Conversion')}</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {convertTools.map((tool) => renderToolCard(tool))}
         </div>

@@ -296,7 +296,7 @@ export const PdfToImageTool = forwardRef<PdfToImageToolRef, PdfToImageToolProps>
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <span className="text-sm text-black/50 dark:text-white/50 animate-pulse">Loading document...</span>
+            <span className="text-sm text-black/50 dark:text-white/50 animate-pulse">{t("tools.loadingDocument", "Loading document...")}</span>
           </div>
         )}
       </div>

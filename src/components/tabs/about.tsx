@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from "react-i18next";
 import { GitBranch, Globe, ExternalLink, ChevronDown, ChevronUp, FileCode2 } from 'lucide-react';
 import pkg from '../../../package.json';
 
@@ -16,6 +17,7 @@ const licenses = [
 ];
 
 export function About() {
+  const { t } = useTranslation();
   const [showLicenses, setShowLicenses] = useState(false);
 
   return (
@@ -30,12 +32,12 @@ export function About() {
         {pkg.displayName || pkg.name}
       </h1>
       <p className="text-[13px] font-medium text-black/50 dark:text-white/50 mb-8 bg-black/5 dark:bg-white/10 px-3 py-1 rounded-full select-all">
-        Version {pkg.version} (Build 2608)
+        {t("about.version", "Version")} {pkg.version} ({t("about.build", "Build")} 2608)
       </p>
 
       {/* Description */}
       <div className="text-[15px] text-center text-black/70 dark:text-white/70 leading-relaxed max-w-lg mb-10">
-        A fast, offline, privacy-first PDF utility suite designed with native macOS aesthetics. Everything runs locally on your machine with zero server uploads.
+        {t("about.desc", "A fast, offline, privacy-first PDF utility suite designed with native macOS aesthetics. Everything runs locally on your machine with zero server uploads.")}
       </div>
 
       {/* Links / Actions */}
@@ -47,7 +49,7 @@ export function About() {
           className="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-white/10 border border-black/10 dark:border-white/10 rounded-lg text-sm font-medium hover:bg-black/5 dark:hover:bg-white/20 transition-colors shadow-sm text-black dark:text-white no-underline"
         >
           <GitBranch size={18} />
-          GitHub Repository
+          {t("about.githubRepo", "GitHub Repository")}
         </a>
         <a 
           href="https://github.com/imshawan" 
@@ -56,7 +58,7 @@ export function About() {
           className="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-white/10 border border-black/10 dark:border-white/10 rounded-lg text-sm font-medium hover:bg-black/5 dark:hover:bg-white/20 transition-colors shadow-sm text-black dark:text-white no-underline"
         >
           <Globe size={18} />
-          Author Website
+          {t("about.authorWebsite", "Author Website")}
         </a>
       </div>
 
@@ -71,8 +73,8 @@ export function About() {
               <FileCode2 size={20} strokeWidth={2} />
             </div>
             <div className="text-left">
-              <h2 className="text-[15px] font-semibold text-black dark:text-white">Open Source Licenses</h2>
-              <p className="text-[12px] text-black/50 dark:text-white/50">Third-party software components & acknowledgements</p>
+              <h2 className="text-[15px] font-semibold text-black dark:text-white">{t("about.openSourceLicenses", "Open Source Licenses")}</h2>
+              <p className="text-[12px] text-black/50 dark:text-white/50">{t("about.thirdPartySoft", "Third-party software components & acknowledgements")}</p>
             </div>
           </div>
           <div className="text-black/50 dark:text-white/50">
@@ -103,7 +105,7 @@ export function About() {
               ))}
             </ul>
             <div className="p-4 pt-6 pb-6 text-[11px] text-center text-black/40 dark:text-white/40">
-              Copyright © 2026 Shawan Mandal. All rights reserved.
+              {t("about.copyright", "Copyright © 2026 Shawan Mandal. All rights reserved.")}
             </div>
           </div>
         )}

@@ -245,7 +245,7 @@ export const HtmlToPdfTool = forwardRef<HtmlToPdfToolRef, HtmlToPdfToolProps>(({
                   className="w-full h-24 flex flex-col items-center justify-center rounded-xl border border-dashed border-black/20 dark:border-white/20 bg-black/[0.02] dark:bg-white/[0.02] hover:bg-black/[0.05] dark:hover:bg-white/[0.05] cursor-pointer transition-colors"
                 >
                   <FileCode size={20} className="text-black/40 dark:text-white/40 mb-1.5" />
-                  <span className="text-[12px] font-medium text-black/60 dark:text-white/60">Click to upload .html file</span>
+                  <span className="text-[12px] font-medium text-black/60 dark:text-white/60">{t('common.clickToUpload', 'Click to upload .html file')}</span>
                   <input 
                     id="html-upload" 
                     type="file" 
@@ -265,7 +265,7 @@ export const HtmlToPdfTool = forwardRef<HtmlToPdfToolRef, HtmlToPdfToolProps>(({
           <div className="flex flex-col gap-4 mt-6 border-t border-black/5 dark:border-white/5 pt-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[13px] font-medium text-black/80 dark:text-white/80 mb-2">Page Size</label>
+                <label className="block text-[13px] font-medium text-black/80 dark:text-white/80 mb-2">{t('common.pageSize', 'Page Size')}</label>
                 <select value={pageSize} onChange={e => setPageSize(e.target.value as any)} className="w-full px-3 py-2 bg-white dark:bg-[#1C1C1E] border border-black/10 dark:border-white/10 rounded-lg text-[13px] focus:outline-none">
                   <option value="A4">A4</option>
                   <option value="A3">A3 (Wide)</option>
@@ -274,24 +274,24 @@ export const HtmlToPdfTool = forwardRef<HtmlToPdfToolRef, HtmlToPdfToolProps>(({
                 </select>
               </div>
               <div>
-                <label className="block text-[13px] font-medium text-black/80 dark:text-white/80 mb-2">Orientation</label>
+                <label className="block text-[13px] font-medium text-black/80 dark:text-white/80 mb-2">{t('common.orientation', 'Orientation')}</label>
                 <select value={landscape ? 'landscape' : 'portrait'} onChange={e => setLandscape(e.target.value === 'landscape')} className="w-full px-3 py-2 bg-white dark:bg-[#1C1C1E] border border-black/10 dark:border-white/10 rounded-lg text-[13px] focus:outline-none">
-                  <option value="portrait">Portrait</option>
-                  <option value="landscape">Landscape</option>
+                  <option value="portrait">{t('common.portrait', 'Portrait')}</option>
+                  <option value="landscape">{t('common.landscape', 'Landscape')}</option>
                 </select>
               </div>
             </div>
             <div>
               <div className="flex justify-between mb-2">
-                <label className="block text-[13px] font-medium text-black/80 dark:text-white/80">Scale (%)</label>
+                <label className="block text-[13px] font-medium text-black/80 dark:text-white/80">{t('common.scale', 'Scale (%)')}</label>
                 <span className="text-[12px] text-black/50 dark:text-white/50">{scale}%</span>
               </div>
               <input type="range" min="25" max="200" value={scale} onChange={e => setScale(Number(e.target.value))} className="w-full accent-[#0071e3]" />
-              <p className="text-[11px] text-black/40 dark:text-white/40 mt-1">Reduce scale if tables are cut off</p>
+              <p className="text-[11px] text-black/40 dark:text-white/40 mt-1">{t("common.reduceScale", "Reduce scale if tables are cut off")}</p>
             </div>
             <div>
               <div className="flex justify-between mb-2">
-                <label className="block text-[13px] font-medium text-black/80 dark:text-white/80">Margin (mm)</label>
+                <label className="block text-[13px] font-medium text-black/80 dark:text-white/80">{t('common.margin', 'Margin (mm)')}</label>
                 <span className="text-[12px] text-black/50 dark:text-white/50">{margin}mm</span>
               </div>
               <input type="range" min="0" max="40" step="1" value={margin} onChange={e => setMargin(Number(e.target.value))} className="w-full accent-[#0071e3]" />
@@ -359,7 +359,7 @@ export const HtmlToPdfTool = forwardRef<HtmlToPdfToolRef, HtmlToPdfToolProps>(({
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 dark:bg-black/50 backdrop-blur-sm transition-opacity duration-200 m-4 rounded-xl">
             <div className="bg-white dark:bg-[#252525] p-5 rounded-2xl shadow-xl flex flex-col items-center gap-3">
               <Loader2 size={28} className="animate-spin text-[#0071e3]" />
-              <span className="text-[13px] font-medium text-black/70 dark:text-white/70">Generating preview...</span>
+              <span className="text-[13px] font-medium text-black/70 dark:text-white/70">{t('tools.generatingPreview', 'Generating preview...')}</span>
             </div>
           </div>
         )}
@@ -382,7 +382,7 @@ export const HtmlToPdfTool = forwardRef<HtmlToPdfToolRef, HtmlToPdfToolProps>(({
               <Globe size={28} className="text-indigo-600 dark:text-indigo-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-black dark:text-white mb-1">Web to PDF</h3>
+              <h3 className="text-lg font-semibold text-black dark:text-white mb-1">{t("common.webToPdf", "Web to PDF")}</h3>
               <p className="text-[13px] text-black/60 dark:text-white/60">
                 Enter a URL or upload an HTML file on the left to instantly preview the generated PDF.
               </p>

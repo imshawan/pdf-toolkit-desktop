@@ -360,10 +360,10 @@ export const ImageToPdfTool = forwardRef<ImageToPdfToolRef, ImageToPdfToolProps>
                 {/* Add more card */}
                 <button
                   onClick={handleAddMore}
-                  className="flex flex-col items-center justify-center gap-2 aspect-square rounded-lg border-2 border-dashed border-black/10 dark:border-white/10 hover:border-blue-400 dark:hover:border-blue-400 hover:bg-blue-500/5 transition-colors cursor-pointer"
+                  className="flex flex-col items-center justify-center gap-2 aspect-square rounded-lg border-2 border-dashed border-black/10 dark:border-white/10 hover:border-blue-400 dark:hover:border-blue-400 hover:bg-blue-500/5 transition-colors h-full cursor-pointer"
                 >
                   <Plus size={24} className="text-black/30 dark:text-white/30" />
-                  <span className="text-[11px] font-medium text-black/40 dark:text-white/40">Add Images</span>
+                  <span className="text-[11px] font-medium text-black/40 dark:text-white/40">{t("tools.addImages", "Add Images")}</span>
                 </button>
               </div>
             </SortableContext>
@@ -391,7 +391,7 @@ export const ImageToPdfTool = forwardRef<ImageToPdfToolRef, ImageToPdfToolProps>
             {/* Preview Settings Sidebar */}
             <div className="w-[260px] flex flex-col border-r border-black/5 dark:border-white/5 bg-[#F9F9F9] dark:bg-[#202020] shrink-0">
               <div className="p-4 border-b border-black/5 dark:border-white/5 bg-[#F5F5F7] dark:bg-[#252525] flex items-center justify-between">
-                <h2 className="text-[14px] font-semibold text-black dark:text-white">PDF Settings</h2>
+                <h2 className="text-[14px] font-semibold text-black dark:text-white">{t("tools.pdfSettings", "PDF Settings")}</h2>
                 <button
                   onClick={() => setShowPreview(false)}
                   className="flex items-center justify-center w-7 h-7 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"

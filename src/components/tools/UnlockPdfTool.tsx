@@ -159,7 +159,7 @@ export const UnlockPdfTool = forwardRef<UnlockPdfToolRef, UnlockPdfToolProps>(({
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           <div>
             <label className="block text-[13px] font-medium text-black/80 dark:text-white/80 mb-2">
-              Password
+              {t('common.password', 'Password')}
             </label>
             <input
               type="password"
@@ -242,7 +242,7 @@ export const UnlockPdfTool = forwardRef<UnlockPdfToolRef, UnlockPdfToolProps>(({
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 dark:bg-black/50 backdrop-blur-sm transition-opacity duration-200">
             <div className="bg-white dark:bg-[#252525] p-5 rounded-2xl shadow-xl flex flex-col items-center gap-3">
               <Loader2 size={28} className="animate-spin text-teal-500" />
-              <span className="text-[13px] font-medium text-black/70 dark:text-white/70">Unlocking preview...</span>
+              <span className="text-[13px] font-medium text-black/70 dark:text-white/70">{t("tools.unlockingPreview", "Unlocking preview...")}</span>
             </div>
           </div>
         )}
@@ -258,7 +258,7 @@ export const UnlockPdfTool = forwardRef<UnlockPdfToolRef, UnlockPdfToolProps>(({
               <Unlock size={28} className="text-teal-600 dark:text-teal-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-black dark:text-white mb-1">Encrypted PDF</h3>
+              <h3 className="text-lg font-semibold text-black dark:text-white mb-1">{t("tools.encryptedPdf", "Encrypted PDF")}</h3>
               <p className="text-[13px] text-black/60 dark:text-white/60">
                 This document is protected with a password. Enter the correct password in the left pane to remove the encryption and save an unlocked copy.
               </p>

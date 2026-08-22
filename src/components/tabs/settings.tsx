@@ -18,7 +18,7 @@ export function Settings() {
           {t('settings.title')}
         </h1>
         <p className="text-[13px] text-black/50 dark:text-white/50 max-w-sm">
-          Manage your overall setup and preferences for PDF Tools.
+          {t('settings.desc', 'Manage your overall setup and preferences for PDF Tools.')}
         </p>
       </div>
 

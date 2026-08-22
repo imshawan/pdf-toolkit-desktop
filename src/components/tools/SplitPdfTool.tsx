@@ -236,9 +236,9 @@ export const SplitPdfTool = forwardRef<SplitPdfToolRef, SplitPdfToolProps>(({ fi
             <p className="text-[11px] text-black/50 dark:text-white/50 mb-3 leading-relaxed">
               {t('tools.splitHelp', 'Enter pages to split. Comma separated groups will be output as separate PDF files.')} 
               <br/><br/>
-              <span className="font-medium">Example:</span> 1-3, 5, 8-10
+              <span className="font-medium">{t("common.example", "Example:")}</span> 1-3, 5, 8-10
               <br/>
-              <span className="italic">Leave blank to extract all pages individually.</span>
+              <span className="italic">{t("common.leaveBlankExtract", "Leave blank to extract all pages individually.")}</span>
             </p>
             <input
               type="text"
@@ -340,7 +340,7 @@ export const SplitPdfTool = forwardRef<SplitPdfToolRef, SplitPdfToolProps>(({ fi
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 dark:bg-black/50 backdrop-blur-sm transition-opacity duration-200">
             <div className="bg-white dark:bg-[#252525] p-5 rounded-2xl shadow-xl flex flex-col items-center gap-3">
               <Loader2 size={28} className="animate-spin text-[#0071e3]" />
-              <span className="text-[13px] font-medium text-black/70 dark:text-white/70">Generating preview...</span>
+              <span className="text-[13px] font-medium text-black/70 dark:text-white/70">{t("tools.generatingPreview", "Generating preview...")}</span>
             </div>
           </div>
         )}
@@ -353,7 +353,7 @@ export const SplitPdfTool = forwardRef<SplitPdfToolRef, SplitPdfToolProps>(({ fi
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <span className="text-sm text-black/50 dark:text-white/50 animate-pulse">Waiting for files...</span>
+            <span className="text-sm text-black/50 dark:text-white/50 animate-pulse">{t("tools.waitingForFiles", "Waiting for files...")}</span>
           </div>
         )}
       </div>
