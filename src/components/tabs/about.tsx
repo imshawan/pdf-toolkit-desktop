@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from "react-i18next";
-import logo from "../../../public/pdf-icon.svg";
+import logo from "@/assets/pdf-icon.svg";
 import { GitBranch, Globe, ExternalLink, ChevronDown, ChevronUp, FileCode2 } from 'lucide-react';
 import pkg from '../../../package.json';
 
