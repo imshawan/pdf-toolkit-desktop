@@ -1,6 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, Trash2, Settings, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useApp } from '@/hooks/useApp';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DropZone } from '../ui/DropZone';
 import { Button } from '../ui/Button';
@@ -25,8 +26,26 @@ interface ToolWorkspaceProps {
 
 export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
   const { t } = useTranslation();
+  const { setSidebarHidden } = useApp();
   const [files, setFiles] = useState<File[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Sync sidebar visibility with file selection
+  useEffect(() => {
+    // html2pdf can operate without files directly via URL mode, so we might want fullscreen for it instantly.
+    // However, hiding sidebar immediately on tool click might be jarring. We'll only hide if files are uploaded.
+    if (files.length > 0) {
+      setSidebarHidden(true);
+    } else {
+      setSidebarHidden(false);
+    }
+    
+    // Cleanup on unmount (e.g. going back to Dashboard)
+    return () => {
+      setSidebarHidden(false);
+    };
+  }, [files.length, toolId, setSidebarHidden]);
+
   
   const rotateToolRef = useRef<RotatePdfToolRef>(null);
   const mergeToolRef = useRef<MergePdfToolRef>(null);

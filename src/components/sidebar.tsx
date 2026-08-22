@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { AppHeader } from './app-header';
 import { NavButton } from './nav-button';
 import { isMac } from '@/lib/platform';
+import { useApp } from '@/hooks/useApp';
 
 interface SidebarProps {
   activeTab: string;
@@ -12,6 +13,7 @@ interface SidebarProps {
 
 export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   const { t } = useTranslation();
+  const { sidebarHidden } = useApp();
 
   return (
     <aside 
@@ -19,7 +21,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         isMac 
           ? 'bg-white/50 dark:bg-transparent' 
           : 'bg-[#EDEDED] dark:bg-[#18181b] border-r border-black/10 dark:border-white/10'
-      }`} 
+      } ${sidebarHidden ? '!w-0 !min-w-0 !border-transparent !px-0 opacity-0 pointer-events-none' : ''}`} 
       style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
     >
 

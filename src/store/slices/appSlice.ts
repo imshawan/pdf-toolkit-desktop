@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 interface AppState {
   theme: 'light' | 'dark' | 'system';
   language: string;
+  sidebarHidden: boolean;
 }
 
 const getInitialTheme = (): AppState['theme'] => {
@@ -17,12 +18,18 @@ const getInitialLanguage = (): string => {
 const initialState: AppState = {
   theme: getInitialTheme(),
   language: getInitialLanguage(),
+  sidebarHidden: false,
 };
 
 export const appSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
+
+    setSidebarHidden: (state, action: PayloadAction<boolean>) => {
+      state.sidebarHidden = action.payload;
+    },
+
     setTheme: (state, action: PayloadAction<AppState['theme']>) => {
       state.theme = action.payload;
       localStorage.setItem('theme', action.payload);
@@ -34,6 +41,6 @@ export const appSlice = createSlice({
   },
 });
 
-export const { setTheme, setLanguage } = appSlice.actions;
+export const { setTheme, setLanguage, setSidebarHidden } = appSlice.actions;
 
 export default appSlice.reducer;
