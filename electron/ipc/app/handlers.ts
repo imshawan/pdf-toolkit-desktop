@@ -127,8 +127,10 @@ export const htmlToPdf = async (_event: IpcMainInvokeEvent, source: string, isUr
       width: 1280, // Set a wide desktop viewport
       height: 800,
       webPreferences: {
+        
         nodeIntegration: false,
         contextIsolation: true,
+        webSecurity: false,
       }
     });
 
@@ -152,6 +154,24 @@ export const htmlToPdf = async (_event: IpcMainInvokeEvent, source: string, isUr
           }
         `);
 
+        await win.webContents.executeJavaScript(`
+          new Promise((resolve) => {
+            const checkImages = () => {
+              const images = Array.from(document.images);
+              if (images.every(img => img.complete)) {
+                resolve();
+              } else {
+                setTimeout(checkImages, 100);
+              }
+            };
+            if (document.readyState === "complete") {
+              checkImages();
+            } else {
+              window.addEventListener("load", checkImages);
+            }
+          })
+        `);
+        await new Promise(r => setTimeout(r, 200));
         const pdfBuffer = await win.webContents.printToPDF({
           printBackground: true,
           pageSize: options.pageSize || 'A4',
