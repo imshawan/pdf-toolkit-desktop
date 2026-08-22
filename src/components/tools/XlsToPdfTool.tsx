@@ -1,8 +1,11 @@
+import * as pdfjsLib from "pdfjs-dist";
+import { prerenderAllPages, revokeAllThumbnails } from "./PdfThumbnail";
 import React, { forwardRef, useImperativeHandle, useState, useEffect } from 'react';
-import { Table, FileSpreadsheet, X, ChevronDown, ChevronRight, Check } from 'lucide-react';
+import { Table, FileSpreadsheet, X, ChevronDown, ChevronRight, Check, Eye, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { downloadPdf, downloadMultiplePdfs, selectFolder } from '../../lib/pdfUtils';
 import toast from 'react-hot-toast';
+import { Button } from '../ui/Button';
 
 export interface XlsToPdfToolRef {
   processAndDownload: () => void;
@@ -28,6 +31,62 @@ export const XlsToPdfTool = forwardRef<XlsToPdfToolRef, XlsToPdfToolProps>(
     const [customLocationPath, setCustomLocationPath] = useState('');
     const [outputFilename, setOutputFilename] = useState('spreadsheets.pdf');
     
+    const [previewImages, setPreviewImages] = useState<string[]>([]);
+    const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
+    const [isPreviewing, setIsPreviewing] = useState<boolean>(false);
+    const [previewingIndex, setPreviewingIndex] = useState<number | null>(null);
+    
+    useEffect(() => {
+      return () => {
+        revokeAllThumbnails(previewImages);
+      };
+    }, [previewImages]);
+
+    const handlePreview = async (index: number) => {
+      if (files.length === 0 || index < 0 || index >= files.length) return;
+      setIsPreviewing(true);
+      setPreviewingIndex(index);
+      const loadingToast = toast.loading("Generating preview...");
+      try {
+        const file = files[index];
+        const fileId = (file as any).path || file.name;
+        const sheetsSet = selectedSheets[fileId];
+        const sheetNames = sheetsSet ? Array.from(sheetsSet) : undefined;
+        
+        const pdfFiles = await new Promise<{filename: string, pdfData: Uint8Array}[]>((resolve, reject) => {
+          const worker = new Worker(new URL("../../lib/xls2pdfWorker.ts", import.meta.url), { type: "module" });
+          worker.onmessage = (e) => {
+            const { success, pdfFiles, error } = e.data;
+            worker.terminate();
+            if (success) resolve(pdfFiles);
+            else reject(new Error(error));
+          };
+          worker.onerror = (err) => { worker.terminate(); reject(err); };
+          worker.postMessage({
+            file,
+            pageSize,
+            orientation,
+            marginMm: margin,
+            sheetNames
+          });
+        });
+        
+        if (pdfFiles.length > 0) {
+          const loadingTask = pdfjsLib.getDocument({ data: pdfFiles[0].pdfData.slice() });
+          const pdfDoc = await loadingTask.promise;
+          const images = await prerenderAllPages(pdfDoc, 600);
+          setPreviewImages(images);
+          setShowPreviewModal(true);
+        }
+      } catch (err: any) {
+        toast.error("Preview failed: " + (err.message || err));
+      } finally {
+        toast.dismiss(loadingToast);
+        setIsPreviewing(false);
+        setPreviewingIndex(null);
+      }
+    };
+
     // New Feature States
     const [exportMode, setExportMode] = useState<ExportMode>('combined');
     const [scaleToFit, setScaleToFit] = useState(true);
@@ -208,7 +267,7 @@ export const XlsToPdfTool = forwardRef<XlsToPdfToolRef, XlsToPdfToolProps>(
 
     if (files.length === 0) return null;
 
-    return (
+    return ( <>
       <div className="flex flex-row h-full w-full bg-white dark:bg-[#1C1C1E] rounded-2xl border border-black/10 dark:border-white/10 overflow-hidden shadow-sm relative">
         {/* Left Pane: Settings */}
         <div className="w-[280px] flex flex-col border-r border-black/5 dark:border-white/5 bg-[#F9F9F9] dark:bg-[#202020] shrink-0">
@@ -402,13 +461,25 @@ export const XlsToPdfTool = forwardRef<XlsToPdfToolRef, XlsToPdfToolProps>(
                       </div>
                     </div>
                     
-                    <button
-                      onClick={() => removeFile(index)}
-                      className="p-2.5 text-black/40 dark:text-white/40 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-colors"
-                      title="Remove file"
-                    >
-                      <X size={20} />
-                    </button>
+                    <div className="flex items-center gap-3">
+                      {!isParsing && (
+                        <Button
+                          variant="secondary"
+                          onClick={() => handlePreview(index)}
+                          disabled={isPreviewing}
+                        >
+                          {isPreviewing && previewingIndex === index ? <Loader2 size={14} className="animate-spin" /> : <Eye size={14} />}
+                          {t("common.preview", "Preview")}
+                        </Button>
+                      )}
+                      <button
+                        onClick={() => removeFile(index)}
+                        className="p-2 text-black/40 dark:text-white/40 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-colors"
+                        title="Remove file"
+                      >
+                        <X size={20} />
+                      </button>
+                    </div>
                   </div>
 
                   {/* Sheet Gallery Grid Container */}
@@ -469,6 +540,45 @@ export const XlsToPdfTool = forwardRef<XlsToPdfToolRef, XlsToPdfToolProps>(
           </div>
         </div>
       </div>
+
+      {/* Preview Modal */}
+      {showPreviewModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 backdrop-blur-sm p-8" onClick={() => setShowPreviewModal(false)}>
+          <div className="bg-[#F5F5F7] dark:bg-[#1C1C1E] w-full max-w-5xl h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-black/10 dark:border-white/10" onClick={e => e.stopPropagation()}>
+            <div className="h-14 bg-white/50 dark:bg-[#2C2C2E]/50 border-b border-black/10 dark:border-white/10 flex items-center justify-between px-6 shrink-0 backdrop-blur-md">
+              <h3 className="font-semibold text-[14px] text-black dark:text-white flex items-center gap-2">
+                <Eye size={16} className="text-[#0071e3]" />
+                {t("common.preview", "Preview")} PDF
+              </h3>
+              <button 
+                onClick={() => setShowPreviewModal(false)} 
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors text-black/50 dark:text-white/50"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="flex-1 bg-black/5 dark:bg-black/20 p-6 relative overflow-y-auto flex flex-col items-center gap-6">
+               {previewImages.length > 0 ? (
+                 previewImages.map((src, i) => (
+                   <img 
+                     key={i} 
+                     src={src} 
+                     alt={"Page " + (i+1)} 
+                     className="max-w-full h-auto bg-white shadow-[0_4px_12px_rgba(0,0,0,0.1)] border border-black/5 rounded-sm" 
+                     style={{ width: "600px" }}
+                   />
+                 ))
+               ) : (
+                 <div className="m-auto flex flex-col items-center justify-center text-black/50 dark:text-white/50 gap-3">
+                   <Loader2 size={24} className="animate-spin text-[#0071e3]" />
+                   <span className="text-[13px] font-medium">Rendering pages...</span>
+                 </div>
+               )}
+            </div>
+          </div>
+        </div>
+      )}
+      </>
     );
   }
 );
