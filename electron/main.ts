@@ -36,18 +36,36 @@ function getWindowBackgroundColor() {
   return nativeTheme.shouldUseDarkColors ? '#1e1e1e' : '#f5f5f7';
 }
 
+function getTitleBarOverlayOptions() {
+  const isDark = nativeTheme.shouldUseDarkColors;
+  return {
+    color: isDark ? '#1E1E1E' : '#F5F5F5',
+    symbolColor: isDark ? '#ffffff' : '#1d1d1f',
+    height: 36,
+  };
+}
+
+function updateWindowTheme() {
+  if (win && !isMac) {
+    win.setBackgroundColor(getWindowBackgroundColor());
+    if (isWin) {
+      try {
+        win.setTitleBarOverlay(getTitleBarOverlayOptions());
+      } catch (e) {
+        // Fallback if not supported
+      }
+    }
+  }
+}
+
 function setupIpcHandlers() {
   ipcMain.on('set-theme', (_event, theme: 'light' | 'dark' | 'system') => {
     nativeTheme.themeSource = theme;
-    if (win && !isMac) {
-      win.setBackgroundColor(getWindowBackgroundColor());
-    }
+    updateWindowTheme();
   });
 
   nativeTheme.on('updated', () => {
-    if (win && !isMac) {
-      win.setBackgroundColor(getWindowBackgroundColor());
-    }
+    updateWindowTheme();
   });
 
   ipcMain.handle('file:save-pdf', savePdf);
@@ -65,7 +83,9 @@ function createWindow() {
     height: 700,
     minWidth: 800,
     minHeight: 500,
-    autoHideMenuBar: !isMac,
+    resizable: true,
+    maximizable: true,
+    autoHideMenuBar: true,
     ...(isMac ? {
       titleBarStyle: 'hiddenInset',
       vibrancy: 'sidebar',
@@ -73,8 +93,9 @@ function createWindow() {
       backgroundColor: '#00000000',
       transparent: true,
     } : {
+      titleBarStyle: 'hidden',
+      titleBarOverlay: isWin ? getTitleBarOverlayOptions() : false,
       backgroundColor: getWindowBackgroundColor(),
-      ...(isWin ? { backgroundMaterial: 'mica' } : {})
     }),
     icon: path.join(process.env.VITE_PUBLIC, 'pdf-icon.png'),
     webPreferences: {
@@ -86,6 +107,16 @@ function createWindow() {
     win.setMenuBarVisibility(false);
     win.removeMenu();
   }
+
+  win.on('unmaximize', () => {
+    if (isWin && win) {
+      try {
+        win.setTitleBarOverlay(getTitleBarOverlayOptions());
+      } catch (e) {
+        // ignore
+      }
+    }
+  });
 
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
