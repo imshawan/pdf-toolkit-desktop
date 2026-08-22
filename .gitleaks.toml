@@ -1,0 +1,11 @@
+title = "gitleaks config"
+
+# Extends default gitleaks rules for scanning secrets in the repository
+
+[allowlist]
+description = "Global allowlist"
+paths = [
+    '''gitleaks\.toml''',
+    '''package-lock\.json''',
+    '''\.gitleaksignore'''
+]
