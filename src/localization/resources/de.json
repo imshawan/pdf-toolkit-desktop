@@ -1,0 +1,97 @@
+{
+  "translation": {
+    "app": {
+      "title": "PDF Tools",
+      "description": "Lokale PDF-Dienstprogramme"
+    },
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "settings": "Einstellungen",
+      "about": "Über"
+    },
+    "settings": {
+      "title": "Einstellungen",
+      "appearance": "Erscheinungsbild",
+      "theme": "Design",
+      "system": "System",
+      "light": "Hell",
+      "dark": "Dunkel",
+      "language": "Sprache",
+      "languageSelect": "Sprache",
+      "behavior": "Verhalten",
+      "saveLocation": "Speicherort-Verhalten",
+      "askEveryTime": "Jedes Mal nachfragen",
+      "defaultFolder": "Im Standardordner speichern",
+      "chooseFolder": "Ordner auswählen",
+      "defaultPageSize": "Standard-Seitengröße",
+      "autoOpen": "Nach der Verarbeitung automatisch öffnen"
+    },
+    "about": {
+      "title": "Über PDF Tools",
+      "version": "Version 1.0.0",
+      "desc": "Eine schnelle, offline-fähige und datenschutzfreundliche PDF-Werkzeugsammlung im nativen macOS-Design. Alles läuft lokal auf Ihrem Gerät, ohne Server-Uploads.",
+      "openSourceLicenses": "Open-Source-Lizenzen",
+      "thirdPartySoft": "Drittanbieter-Softwarekomponenten & Danksagungen",
+      "githubRepo": "GitHub-Repository",
+      "authorWebsite": "Website des Autors",
+      "copyright": "Copyright © 2026 Shawan Mandal. Alle Rechte vorbehalten."
+    },
+    "dashboard": {
+      "overview": "Übersicht",
+      "subtitle": "Wählen Sie unten ein Werkzeug aus, um Ihre PDF-Dateien lokal zu verarbeiten.",
+      "startProcessing": "Verarbeitung starten",
+      "coreTools": "Hauptwerkzeuge",
+      "conversion": "Konvertierung"
+    },
+    "tools": {
+      "merge": "PDF zusammenführen",
+      "mergeDesc": "Mehrere PDFs zu einem Dokument kombinieren",
+      "split": "PDF teilen",
+      "splitDesc": "Seiten extrahieren oder Dateien in mehrere Dokumente aufteilen",
+      "rotate": "PDF drehen",
+      "rotateDesc": "Seitenausrichtungen einfach mit einem Klick korrigieren",
+      "img2pdf": "Bilder zu PDF",
+      "img2pdfDesc": "Bilder (JPG, PNG) ins PDF-Format konvertieren",
+      "xls2pdf": "Excel zu PDF",
+      "xls2pdfDesc": "Excel-Tabellen in PDF-Dokumente konvertieren",
+      "rearrange": "Seiten neu anordnen",
+      "rearrangeDesc": "Seiten visuell neu anordnen, löschen oder organisieren",
+      "sign": "PDF signieren",
+      "signDesc": "Fügen Sie einem PDF Ihre Signatur hinzu",
+      "watermark": "Wasserzeichen",
+      "watermarkDesc": "Bild oder Text über PDF stempeln",
+      "protect": "Schützen",
+      "protectDesc": "Fügen Sie ein Passwort hinzu, um Ihr PDF zu schützen",
+      "unlock": "Entsperren",
+      "unlockDesc": "Passwort aus einem PDF entfernen",
+      "pdf2img": "PDF zu Bild",
+      "pdf2imgDesc": "PDF-Seiten als Bilder extrahieren",
+      "html2pdf": "HTML zu PDF",
+      "html2pdfDesc": "Webseiten in PDF konvertieren",
+      "saveLocation": "Speicherort",
+      "generatingPreview": "Vorschau wird erstellt..."
+    },
+    "common": {
+      "addFile": "Datei hinzufügen",
+      "clearAll": "Alle entfernen",
+      "processDownload": "Verarbeiten & Herunterladen",
+      "processing": "Wird verarbeitet...",
+      "cancel": "Abbrechen",
+      "delete": "Löschen",
+      "dragDropFile": "Datei hierher ziehen & ablegen",
+      "pageSize": "Seitengröße",
+      "orientation": "Ausrichtung",
+      "portrait": "Hochformat",
+      "landscape": "Querformat",
+      "scale": "Skalierung (%)",
+      "margin": "Rand (mm)",
+      "clickToUpload": "Klicken zum Hochladen",
+      "password": "Passwort",
+      "text": "Text",
+      "image": "Bild",
+      "opacity": "Deckkraft",
+      "apply": "Anwenden",
+      "preview": "Vorschau"
+    }
+  }
+}

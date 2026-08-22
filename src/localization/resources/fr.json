@@ -1,0 +1,97 @@
+{
+  "translation": {
+    "app": {
+      "title": "PDF Tools",
+      "description": "Utilitaires PDF à traitement local"
+    },
+    "sidebar": {
+      "dashboard": "Tableau de bord",
+      "settings": "Paramètres",
+      "about": "À propos"
+    },
+    "settings": {
+      "title": "Paramètres",
+      "appearance": "Apparence",
+      "theme": "Thème",
+      "system": "Système",
+      "light": "Clair",
+      "dark": "Sombre",
+      "language": "Langue",
+      "languageSelect": "Langue",
+      "behavior": "Comportement",
+      "saveLocation": "Comportement d'enregistrement",
+      "askEveryTime": "Demander où enregistrer",
+      "defaultFolder": "Enregistrer dans le dossier par défaut",
+      "chooseFolder": "Choisir un dossier",
+      "defaultPageSize": "Taille de page par défaut",
+      "autoOpen": "Ouvrir automatiquement après le traitement"
+    },
+    "about": {
+      "title": "À propos de PDF Tools",
+      "version": "Version 1.0.0",
+      "desc": "Une suite d'utilitaires PDF rapide, hors ligne et respectueuse de la vie privée, conçue avec l'esthétique native de macOS. Tout s'exécute localement sur votre machine, sans aucun téléchargement vers un serveur.",
+      "openSourceLicenses": "Licences open source",
+      "thirdPartySoft": "Composants logiciels tiers et remerciements",
+      "githubRepo": "Dépôt GitHub",
+      "authorWebsite": "Site web de l'auteur",
+      "copyright": "Copyright © 2026 Shawan Mandal. Tous droits réservés."
+    },
+    "dashboard": {
+      "overview": "Aperçu",
+      "subtitle": "Sélectionnez un outil ci-dessous pour traiter vos fichiers PDF localement.",
+      "startProcessing": "Démarrer le traitement",
+      "coreTools": "Outils principaux",
+      "conversion": "Conversion"
+    },
+    "tools": {
+      "merge": "Fusionner des PDF",
+      "mergeDesc": "Combinez plusieurs PDF en un seul document",
+      "split": "Diviser le PDF",
+      "splitDesc": "Extrayez des pages ou divisez des fichiers en plusieurs documents",
+      "rotate": "Faire pivoter le PDF",
+      "rotateDesc": "Corrigez facilement l'orientation des pages en un clic",
+      "img2pdf": "Images en PDF",
+      "img2pdfDesc": "Convertissez des images (JPG, PNG) au format PDF",
+      "xls2pdf": "Excel en PDF",
+      "xls2pdfDesc": "Convertissez des feuilles de calcul Excel en documents PDF",
+      "rearrange": "Réorganiser les pages",
+      "rearrangeDesc": "Réorganisez, supprimez ou organisez visuellement les pages",
+      "sign": "Signer le PDF",
+      "signDesc": "Ajoutez votre signature à un PDF",
+      "watermark": "Filigrane",
+      "watermarkDesc": "Apposez une image ou du texte sur un PDF",
+      "protect": "Protéger",
+      "protectDesc": "Ajoutez un mot de passe pour protéger votre PDF",
+      "unlock": "Déverrouiller",
+      "unlockDesc": "Supprimez le mot de passe d'un PDF",
+      "pdf2img": "PDF en image",
+      "pdf2imgDesc": "Extrayez les pages du PDF en images",
+      "html2pdf": "HTML en PDF",
+      "html2pdfDesc": "Convertissez des pages web en PDF",
+      "saveLocation": "Emplacement de sauvegarde",
+      "generatingPreview": "Génération de l'aperçu..."
+    },
+    "common": {
+      "addFile": "Ajouter un fichier",
+      "clearAll": "Tout effacer",
+      "processDownload": "Traiter et télécharger",
+      "processing": "Traitement en cours...",
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "dragDropFile": "Glisser-déposer le fichier ici",
+      "pageSize": "Taille de la page",
+      "orientation": "Orientation",
+      "portrait": "Portrait",
+      "landscape": "Paysage",
+      "scale": "Échelle (%)",
+      "margin": "Marge (mm)",
+      "clickToUpload": "Cliquez pour importer",
+      "password": "Mot de passe",
+      "text": "Texte",
+      "image": "Image",
+      "opacity": "Opacité",
+      "apply": "Appliquer",
+      "preview": "Aperçu"
+    }
+  }
+}

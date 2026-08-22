@@ -1,0 +1,97 @@
+{
+  "translation": {
+    "app": {
+      "title": "PDF 工具",
+      "description": "本地 PDF 处理工具"
+    },
+    "sidebar": {
+      "dashboard": "仪表盘",
+      "settings": "设置",
+      "about": "关于"
+    },
+    "settings": {
+      "title": "设置",
+      "appearance": "外观",
+      "theme": "主题",
+      "system": "系统",
+      "light": "浅色",
+      "dark": "深色",
+      "language": "语言",
+      "languageSelect": "选择语言",
+      "behavior": "行为",
+      "saveLocation": "保存位置设置",
+      "askEveryTime": "每次询问保存位置",
+      "defaultFolder": "保存到默认文件夹",
+      "chooseFolder": "选择文件夹",
+      "defaultPageSize": "默认页面大小",
+      "autoOpen": "处理完成后自动打开"
+    },
+    "about": {
+      "title": "关于 PDF 工具",
+      "version": "版本 1.0.0",
+      "desc": "一款快速、离线、隐私优先的 PDF 实用工具套件，采用原生 macOS 美学设计。所有操作均在您的本地设备上运行，零服务器上传。",
+      "openSourceLicenses": "开源许可证",
+      "thirdPartySoft": "第三方软件组件与鸣谢",
+      "githubRepo": "GitHub 仓库",
+      "authorWebsite": "作者网站",
+      "copyright": "版权所有 © 2026 Shawan Mandal。保留所有权利。"
+    },
+    "dashboard": {
+      "overview": "概览",
+      "subtitle": "请在下方选择一个工具，以在本地处理您的 PDF 文件。",
+      "startProcessing": "开始处理",
+      "coreTools": "核心工具",
+      "conversion": "格式转换"
+    },
+    "tools": {
+      "merge": "合并 PDF",
+      "mergeDesc": "将多个 PDF 文件合并为一个文档",
+      "split": "拆分 PDF",
+      "splitDesc": "提取页面或将文件拆分为多个文档",
+      "rotate": "旋转 PDF",
+      "rotateDesc": "一键轻松修正页面方向",
+      "img2pdf": "图片转 PDF",
+      "img2pdfDesc": "将图片 (JPG, PNG) 转换为 PDF 格式",
+      "xls2pdf": "Excel 转 PDF",
+      "xls2pdfDesc": "将 Excel 电子表格转换为 PDF 文档",
+      "rearrange": "重排页面",
+      "rearrangeDesc": "可视化地重新排序、删除或组织页面",
+      "sign": "签名 PDF",
+      "signDesc": "为 PDF 添加您的签名",
+      "watermark": "水印",
+      "watermarkDesc": "在 PDF 上添加图片或文本水印",
+      "protect": "保护",
+      "protectDesc": "添加密码以保护您的 PDF",
+      "unlock": "解锁",
+      "unlockDesc": "移除 PDF 的密码",
+      "pdf2img": "PDF 转图片",
+      "pdf2imgDesc": "将 PDF 页面提取为图片",
+      "html2pdf": "HTML 转 PDF",
+      "html2pdfDesc": "将网页转换为 PDF",
+      "saveLocation": "保存位置",
+      "generatingPreview": "正在生成预览..."
+    },
+    "common": {
+      "addFile": "添加文件",
+      "clearAll": "全部清除",
+      "processDownload": "处理并下载",
+      "processing": "处理中...",
+      "cancel": "取消",
+      "delete": "删除",
+      "dragDropFile": "将文件拖放到此处",
+      "pageSize": "页面大小",
+      "orientation": "方向",
+      "portrait": "纵向",
+      "landscape": "横向",
+      "scale": "缩放 (%)",
+      "margin": "边距 (mm)",
+      "clickToUpload": "点击上传",
+      "password": "密码",
+      "text": "文本",
+      "image": "图片",
+      "opacity": "不透明度",
+      "apply": "应用",
+      "preview": "预览"
+    }
+  }
+}

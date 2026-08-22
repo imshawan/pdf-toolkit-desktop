@@ -1,5 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import translations from "./resources";
 
 const resources = {
   "en": {
@@ -195,8 +196,39 @@ const resources = {
         "preview": "पूर्वावलोकन"
       }
     }
-  }
+  },
+  "de": translations.de,
+  "fr": translations.fr,
+  "es": translations.es,
+  "zh-CN": translations.zhCN
 };
+
+export const languages = [
+  {
+    code: "en",
+    label: "English",
+  },
+  {
+    code: "es",
+    label: "Español (Spanish)",
+  },
+  {
+    code: "hi",
+    label: "हिंदी (Hindi)",
+  },
+  {
+    code: "zh-CN",
+    label: "简体中文 (Simplified Chinese)"
+  },
+  {
+    code: "de",
+    label: "Deutsch (German)",
+  },
+  {
+    code: "fr",
+    label: "Français (French)"
+  }
+]
 
 i18n
   .use(initReactI18next)

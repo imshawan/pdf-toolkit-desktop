@@ -2,6 +2,7 @@ import React from 'react';
 import { useApp } from '@/hooks/useApp';
 import { Settings as SettingsIcon, Monitor, Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { languages } from '@/localization/i18n';
 
 export function Settings() {
   const { theme, setTheme, language, setLanguage } = useApp();
@@ -72,8 +73,11 @@ export function Settings() {
                 onChange={(e) => setLanguage(e.target.value)}
                 className="bg-transparent border border-black/10 dark:border-white/10 text-black dark:text-white text-[12px] rounded-md px-3 py-1 outline-none focus:ring-2 focus:ring-[#0A7BFA]"
               >
-                <option value="en">English</option>
-                <option value="hi">हिंदी (Hindi)</option>
+                {languages.map((lang) => (
+                  <option key={lang.code} value={lang.code}>
+                    {lang.label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
