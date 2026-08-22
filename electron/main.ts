@@ -27,12 +27,28 @@ export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
 
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
 
+const isMac = process.platform === 'darwin';
+const isWin = process.platform === 'win32';
+
 let win: BrowserWindow | null
+
+function getWindowBackgroundColor() {
+  return nativeTheme.shouldUseDarkColors ? '#1e1e1e' : '#f5f5f7';
+}
 
 function setupIpcHandlers() {
   ipcMain.on('set-theme', (_event, theme: 'light' | 'dark' | 'system') => {
     nativeTheme.themeSource = theme;
-  })
+    if (win && !isMac) {
+      win.setBackgroundColor(getWindowBackgroundColor());
+    }
+  });
+
+  nativeTheme.on('updated', () => {
+    if (win && !isMac) {
+      win.setBackgroundColor(getWindowBackgroundColor());
+    }
+  });
 
   ipcMain.handle('file:save-pdf', savePdf);
   ipcMain.handle('file:save-multiple-pdfs', saveMultiplePdfs);
@@ -49,11 +65,16 @@ function createWindow() {
     height: 700,
     minWidth: 800,
     minHeight: 500,
-    titleBarStyle: 'hiddenInset',
-    vibrancy: 'sidebar',
-    visualEffectState: 'active',
-    backgroundColor: '#00000000',
-    transparent: true,
+    ...(isMac ? {
+      titleBarStyle: 'hiddenInset',
+      vibrancy: 'sidebar',
+      visualEffectState: 'active',
+      backgroundColor: '#00000000',
+      transparent: true,
+    } : {
+      backgroundColor: getWindowBackgroundColor(),
+      ...(isWin ? { backgroundMaterial: 'mica' } : {})
+    }),
     icon: path.join(process.env.VITE_PUBLIC, 'pdf-icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),

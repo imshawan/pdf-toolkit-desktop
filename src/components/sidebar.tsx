@@ -3,6 +3,7 @@ import { LayoutGrid, Settings, HelpCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { AppHeader } from './app-header';
 import { NavButton } from './nav-button';
+import { isMac } from '@/lib/platform';
 
 interface SidebarProps {
   activeTab: string;
@@ -13,10 +14,20 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   const { t } = useTranslation();
 
   return (
-    <aside className="flex flex-col w-[220px] h-full bg-white/50 dark:bg-transparent overflow-hidden" style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}>
+    <aside 
+      className={`flex flex-col w-[220px] h-full overflow-hidden ${
+        isMac 
+          ? 'bg-white/50 dark:bg-transparent' 
+          : 'bg-[#EDEDED] dark:bg-[#18181b] border-r border-black/10 dark:border-white/10'
+      }`} 
+      style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
+    >
 
       {/* Header section with App Icon & Title */}
-      <div className="flex items-center gap-3 px-4 pt-12 pb-0" style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}>
+      <div 
+        className={`flex items-center gap-3 px-4 pb-0 ${isMac ? 'pt-12' : 'pt-4'}`} 
+        style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
+      >
         <AppHeader />
       </div>
 

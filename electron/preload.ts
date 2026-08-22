@@ -1,6 +1,7 @@
 import { ipcRenderer, contextBridge } from 'electron'
 
-// --------- Expose some API to the Renderer process ---------
+// --------- Expose APIs to the Renderer process ---------
+contextBridge.exposeInMainWorld('platform', process.platform)
 contextBridge.exposeInMainWorld('ipcRenderer', {
   on(...args: Parameters<typeof ipcRenderer.on>) {
     const [channel, listener] = args
