@@ -65,6 +65,7 @@ function createWindow() {
     height: 700,
     minWidth: 800,
     minHeight: 500,
+    autoHideMenuBar: !isMac,
     ...(isMac ? {
       titleBarStyle: 'hiddenInset',
       vibrancy: 'sidebar',
@@ -80,6 +81,11 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.mjs'),
     },
   })
+
+  if (!isMac) {
+    win.setMenuBarVisibility(false);
+    win.removeMenu();
+  }
 
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
@@ -147,7 +153,6 @@ let currentMenuTranslations = {
 };
 
 function setupMenu(translations = currentMenuTranslations) {
-  currentMenuTranslations = translations;
   const isMac = process.platform === "darwin";
   const appName = pkg.displayName ?? pkg.name;
 
@@ -160,6 +165,13 @@ function setupMenu(translations = currentMenuTranslations) {
     website: pkg.homepage,
     iconPath: path.join(process.env.VITE_PUBLIC, "pdf-icon.png")
   });
+
+  if (!isMac) {
+    Menu.setApplicationMenu(null);
+    return;
+  }
+
+  currentMenuTranslations = translations;
 
   const template: MenuItemConstructorOptions[] = [
     ...(isMac
