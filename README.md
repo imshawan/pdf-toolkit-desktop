@@ -7,7 +7,7 @@
   [![React](https://img.shields.io/badge/React-18.2.0-61DAFB?logo=react&logoColor=black)](#)
   [![TypeScript](https://img.shields.io/badge/TypeScript-5.2-3178C6?logo=typescript&logoColor=white)](#)
   [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.3-38B2AC?logo=tailwind-css&logoColor=white)](#)
-  [![License](https://img.shields.io/badge/License-Apache_2.0-green.svg)](#)
+  [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](#)
 </div>
 
 ---
@@ -107,4 +107,4 @@ The compiled binaries will be exported to the `release/` directory.
 
 ## License
 
-This project is licensed under the Apache License 2.0. See the `LICENSE` file for full details.
+This project is licensed under the BSD 3-Clause License. See the `LICENSE` file for full details.
