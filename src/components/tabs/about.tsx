@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from "react-i18next";
+import logo from "../../../public/pdf-icon.svg";
 import { GitBranch, Globe, ExternalLink, ChevronDown, ChevronUp, FileCode2 } from 'lucide-react';
 import pkg from '../../../package.json';
 
@@ -24,7 +25,7 @@ export function About() {
     <div className="p-8 max-w-3xl mx-auto flex flex-col items-center mt-12 pb-24 select-text">
       {/* App Logo */}
       <div className="w-32 h-32 mb-6 pointer-events-none drop-shadow-xl relative">
-        <img src="/pdf-icon.svg" alt="PDF Toolkit Logo" className="w-full h-full object-contain" />
+        <img src={logo} alt="PDF Toolkit Logo" className="w-full h-full object-contain" />
       </div>
       
       {/* App Title & Version */}
