@@ -360,7 +360,7 @@ export const ImageToPdfTool = forwardRef<ImageToPdfToolRef, ImageToPdfToolProps>
                 {/* Add more card */}
                 <button
                   onClick={handleAddMore}
-                  className="flex flex-col items-center justify-center gap-2 aspect-square rounded-lg border-2 border-dashed border-black/10 dark:border-white/10 hover:border-blue-400 dark:hover:border-blue-400 hover:bg-blue-500/5 transition-colors h-full cursor-pointer"
+                  className="flex flex-col items-center justify-center gap-2 w-full h-full rounded-lg border-2 border-dashed border-black/10 dark:border-white/10 hover:border-blue-400 dark:hover:border-blue-400 hover:bg-blue-500/5 transition-colors cursor-pointer"
                 >
                   <Plus size={24} className="text-black/30 dark:text-white/30" />
                   <span className="text-[11px] font-medium text-black/40 dark:text-white/40">{t("tools.addImages", "Add Images")}</span>
