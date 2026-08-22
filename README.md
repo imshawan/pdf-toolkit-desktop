@@ -57,6 +57,8 @@ PDF Toolkit provides a comprehensive suite of offline tools wrapped in an elegan
 - **Watermarking & Signing:** Type, draw, or upload cursive signatures and high-res watermarks with pixel-perfect visual parity and robust font support.
 - **Manipulation:** Rotate documents and visually rearrange/delete pages using an interactive drag-and-drop grid.
 
+👉 **[View App Screenshots Gallery](./docs/screenshots.md)**
+
 ---
 
 ## Security & Privacy
