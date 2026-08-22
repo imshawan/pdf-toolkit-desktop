@@ -54,7 +54,11 @@
   "main": "dist-electron/main.js",
   "productName": "PDF Toolkit",
   "description": "A modern, native macOS-style PDF utility application.",
-  "author": "Shawan Mandal",
+  "author": {
+    "name": "Shawan Mandal",
+    "email": "github@imshawan.dev",
+    "url": "https://www.imshawan.dev/"
+  },
   "build": {
     "appId": "com.imshawan.pdftoolkit",
     "productName": "PDF Toolkit",

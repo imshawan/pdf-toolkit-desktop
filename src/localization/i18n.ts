@@ -71,7 +71,7 @@ const resources = {
         "thirdPartySoft": "Third-party software components & acknowledgements",
         "githubRepo": "GitHub Repository",
         "authorWebsite": "Author Website",
-        "copyright": "Copyright © 2026 Shawan Mandal. All rights reserved."
+        "copyright": "Copyright © {{year}} {{author}}. All rights reserved."
       },
       "dashboard": {
         "overview": "Overview",
@@ -200,7 +200,7 @@ const resources = {
         "thirdPartySoft": "तृतीय-पक्ष सॉफ़्टवेयर घटक और पावती",
         "githubRepo": "गिटहब रिपोजिटरी",
         "authorWebsite": "लेखक की वेबसाइट",
-        "copyright": "कॉपीराइट © 2026 शावन मंडल। सर्वाधिकार सुरक्षित।"
+        "copyright": "कॉपीराइट © {{year}} {{author}}। सर्वाधिकार सुरक्षित।"
       },
       "dashboard": {
         "overview": "सिंहावलोकन",

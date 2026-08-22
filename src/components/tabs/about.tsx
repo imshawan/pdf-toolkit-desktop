@@ -44,7 +44,7 @@ export function About() {
       {/* Links / Actions */}
       <div className="flex gap-4 mb-16 select-none">
         <a 
-          href="https://github.com/imshawan/pdf-toolkit-desktop" 
+          href={pkg.homepage} 
           target="_blank" 
           rel="noreferrer"
           className="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-white/10 border border-black/10 dark:border-white/10 rounded-lg text-sm font-medium hover:bg-black/5 dark:hover:bg-white/20 transition-colors shadow-sm text-black dark:text-white no-underline"
@@ -53,7 +53,7 @@ export function About() {
           {t("about.githubRepo", "GitHub Repository")}
         </a>
         <a 
-          href="https://github.com/imshawan" 
+          href={pkg.author.url} 
           target="_blank" 
           rel="noreferrer"
           className="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-white/10 border border-black/10 dark:border-white/10 rounded-lg text-sm font-medium hover:bg-black/5 dark:hover:bg-white/20 transition-colors shadow-sm text-black dark:text-white no-underline"
@@ -106,7 +106,7 @@ export function About() {
               ))}
             </ul>
             <div className="p-4 pt-6 pb-6 text-[11px] text-center text-black/40 dark:text-white/40">
-              {t("about.copyright", "Copyright © 2026 Shawan Mandal. All rights reserved.")}
+              {t("about.copyright", { year: new Date().getFullYear(), author: pkg.author.name })}
             </div>
           </div>
         )}

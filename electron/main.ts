@@ -128,15 +128,15 @@ let currentMenuTranslations = {
 function setupMenu(translations = currentMenuTranslations) {
   currentMenuTranslations = translations;
   const isMac = process.platform === "darwin";
-  const appName = "PDF Toolkit";
+  const appName = pkg.displayName ?? pkg.name;
 
   app.setAboutPanelOptions({
     applicationName: appName,
-    applicationVersion: "1.0.0",
-    version: "1.0.0",
-    copyright: "© 2026 PDF Toolkit",
-    authors: ["Shawan Mandal"],
-    website: "https://github.com/imshawan/pdf-toolkit-desktop",
+    applicationVersion: pkg.version,
+    version: pkg.version,
+    copyright: `© ${new Date().getFullYear()} ${pkg.author.name}`,
+    authors: [pkg.author.name],
+    website: pkg.homepage,
     iconPath: path.join(process.env.VITE_PUBLIC, "pdf-icon.png")
   });
 

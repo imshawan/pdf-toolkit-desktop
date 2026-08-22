@@ -66,7 +66,7 @@
       "thirdPartySoft": "Componentes de software de terceros y reconocimientos",
       "githubRepo": "Repositorio de GitHub",
       "authorWebsite": "Sitio web del autor",
-      "copyright": "Copyright © 2026 Shawan Mandal. Todos los derechos reservados."
+      "copyright": "Copyright © {{year}} {{author}}. Todos los derechos reservados."
     },
     "dashboard": {
       "overview": "Resumen",

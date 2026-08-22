@@ -66,7 +66,7 @@
       "thirdPartySoft": "第三方软件组件与鸣谢",
       "githubRepo": "GitHub 仓库",
       "authorWebsite": "作者网站",
-      "copyright": "版权所有 © 2026 Shawan Mandal。保留所有权利。"
+      "copyright": "版权所有 © {{year}} {{author}}。保留所有权利。"
     },
     "dashboard": {
       "overview": "概览",
