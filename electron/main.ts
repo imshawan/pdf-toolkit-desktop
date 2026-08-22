@@ -98,7 +98,31 @@ let currentMenuTranslations = {
   view: "View",
   window: "Window",
   help: "Help",
-  about: "About PDF Toolkit"
+  about: "About PDF Toolkit",
+  services: "Services",
+  hide: "Hide PDF Toolkit",
+  hideOthers: "Hide Others",
+  unhide: "Show All",
+  quit: "Quit PDF Toolkit",
+  close: "Close",
+  undo: "Undo",
+  redo: "Redo",
+  cut: "Cut",
+  copy: "Copy",
+  paste: "Paste",
+  pasteAndMatchStyle: "Paste and Match Style",
+  delete: "Delete",
+  selectAll: "Select All",
+  reload: "Reload",
+  forceReload: "Force Reload",
+  toggleDevTools: "Toggle Developer Tools",
+  resetZoom: "Actual Size",
+  zoomIn: "Zoom In",
+  zoomOut: "Zoom Out",
+  togglefullscreen: "Toggle Full Screen",
+  minimize: "Minimize",
+  zoom: "Zoom",
+  front: "Bring All to Front"
 };
 
 function setupMenu(translations = currentMenuTranslations) {
@@ -121,72 +145,72 @@ function setupMenu(translations = currentMenuTranslations) {
       ? [{
           label: appName,
           submenu: [
-            { role: "about", label: translations.about },
+            { label: translations.about, click: () => app.showAboutPanel() },
             { type: "separator" },
-            { role: "services" },
+            { role: "services", label: translations.services },
             { type: "separator" },
-            { role: "hide" },
-            { role: "hideOthers" },
-            { role: "unhide" },
+            { role: "hide", label: translations.hide },
+            { role: "hideOthers", label: translations.hideOthers },
+            { role: "unhide", label: translations.unhide },
             { type: "separator" },
-            { role: "quit" }
+            { role: "quit", label: translations.quit }
           ]
         }] as MenuItemConstructorOptions[]
       : []),
     {
       label: translations.file,
       submenu: [
-        isMac ? { role: "close" } : { role: "quit" }
+        isMac ? { role: "close", label: translations.close } : { role: "quit", label: translations.quit }
       ] as MenuItemConstructorOptions[]
     },
     {
       label: translations.edit,
       submenu: [
-        { role: "undo" },
-        { role: "redo" },
+        { role: "undo", label: translations.undo },
+        { role: "redo", label: translations.redo },
         { type: "separator" },
-        { role: "cut" },
-        { role: "copy" },
-        { role: "paste" },
+        { role: "cut", label: translations.cut },
+        { role: "copy", label: translations.copy },
+        { role: "paste", label: translations.paste },
         ...(isMac
           ? [
-              { role: "pasteAndMatchStyle" },
-              { role: "delete" },
-              { role: "selectAll" }
+              { role: "pasteAndMatchStyle", label: translations.pasteAndMatchStyle },
+              { role: "delete", label: translations.delete },
+              { role: "selectAll", label: translations.selectAll }
             ]
           : [
-              { role: "delete" },
+              { role: "delete", label: translations.delete },
               { type: "separator" },
-              { role: "selectAll" }
+              { role: "selectAll", label: translations.selectAll }
             ]) as MenuItemConstructorOptions[]
       ] as MenuItemConstructorOptions[]
     },
     {
       label: translations.view,
       submenu: [
-        { role: "reload" },
-        { role: "forceReload" },
-        { role: "toggleDevTools" },
+        { role: "reload", label: translations.reload },
+        { role: "forceReload", label: translations.forceReload },
+        { role: "toggleDevTools", label: translations.toggleDevTools },
         { type: "separator" },
-        { role: "resetZoom" },
-        { role: "zoomIn" },
-        { role: "zoomOut" },
+        { role: "resetZoom", label: translations.resetZoom },
+        { role: "zoomIn", label: translations.zoomIn },
+        { role: "zoomOut", label: translations.zoomOut },
         { type: "separator" },
-        { role: "togglefullscreen" }
+        { role: "togglefullscreen", label: translations.togglefullscreen }
       ] as MenuItemConstructorOptions[]
     },
     {
       label: translations.window,
       submenu: [
-        { role: "minimize" },
-        { role: "zoom" },
+        { role: "minimize", label: translations.minimize },
+        { role: "zoom", label: translations.zoom },
         ...(isMac
           ? [
               { type: "separator" },
-              { role: "front" }
+              { role: "front", label: translations.front }
             ]
           : [
-              { role: "close" }
+              { role: "close", label: translations.close }
             ]) as MenuItemConstructorOptions[]
       ] as MenuItemConstructorOptions[]
     },

@@ -32,7 +32,31 @@ function App() {
         view: i18n.t("menu.view", "View"),
         window: i18n.t("menu.window", "Window"),
         help: i18n.t("menu.help", "Help"),
-        about: i18n.t("menu.about", "About PDF Toolkit")
+        about: i18n.t("menu.about", "About PDF Toolkit"),
+        services: i18n.t("menu.services", "Services"),
+        hide: i18n.t("menu.hide", "Hide PDF Toolkit"),
+        hideOthers: i18n.t("menu.hideOthers", "Hide Others"),
+        unhide: i18n.t("menu.unhide", "Show All"),
+        quit: i18n.t("menu.quit", "Quit PDF Toolkit"),
+        close: i18n.t("menu.close", "Close"),
+        undo: i18n.t("menu.undo", "Undo"),
+        redo: i18n.t("menu.redo", "Redo"),
+        cut: i18n.t("menu.cut", "Cut"),
+        copy: i18n.t("menu.copy", "Copy"),
+        paste: i18n.t("menu.paste", "Paste"),
+        pasteAndMatchStyle: i18n.t("menu.pasteAndMatchStyle", "Paste and Match Style"),
+        delete: i18n.t("menu.delete", "Delete"),
+        selectAll: i18n.t("menu.selectAll", "Select All"),
+        reload: i18n.t("menu.reload", "Reload"),
+        forceReload: i18n.t("menu.forceReload", "Force Reload"),
+        toggleDevTools: i18n.t("menu.toggleDevTools", "Toggle Developer Tools"),
+        resetZoom: i18n.t("menu.resetZoom", "Actual Size"),
+        zoomIn: i18n.t("menu.zoomIn", "Zoom In"),
+        zoomOut: i18n.t("menu.zoomOut", "Zoom Out"),
+        togglefullscreen: i18n.t("menu.togglefullscreen", "Toggle Full Screen"),
+        minimize: i18n.t("menu.minimize", "Minimize"),
+        zoom: i18n.t("menu.zoom", "Zoom"),
+        front: i18n.t("menu.front", "Bring All to Front")
       });
     }
   }, [i18n.language]);
