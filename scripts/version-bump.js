@@ -41,12 +41,7 @@ try {
       // Stage package.json
       execSync('git add package.json');
       
-      // Optionally stage package-lock.json if it's not gitignored
-      try {
-        execSync('git add package-lock.json 2>/dev/null');
-      } catch (e) {
-        // Ignored
-      }
+
       
       // Commit
       const commitMsg = `chore(release): bump version to ${newVersion}`;
