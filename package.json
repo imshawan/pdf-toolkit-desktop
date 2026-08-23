@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "version:major": "node scripts/version-bump.js major",
     "version:minor": "node scripts/version-bump.js minor",
-    "version:patch": "node scripts/version-bump.js patch"
+    "version:patch": "node scripts/version-bump.js patch",
+    "changelog": "node scripts/release-changelog.js"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
