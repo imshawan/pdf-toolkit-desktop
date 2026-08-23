@@ -202,3 +202,8 @@ export const htmlToPdf = async (_event: IpcMainInvokeEvent, source: string, isUr
     }
   });
 };
+
+// Read file into buffer for IPC injection
+export const readFileBuffer = async (_event: any, filePath: string) => {
+  return fs.readFileSync(filePath);
+};

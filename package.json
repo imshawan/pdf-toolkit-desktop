@@ -90,7 +90,31 @@
         "tar.gz"
       ],
       "icon": "build/icon.png"
-    }
+    },
+    "fileAssociations": [
+      {
+        "ext": "pdf",
+        "name": "PDF Document",
+        "description": "PDF Document",
+        "role": "Viewer"
+      },
+      {
+        "ext": [
+          "png",
+          "jpg",
+          "jpeg"
+        ],
+        "name": "Image File",
+        "description": "Image File",
+        "role": "Viewer"
+      },
+      {
+        "ext": "html",
+        "name": "HTML Document",
+        "description": "HTML Document",
+        "role": "Viewer"
+      }
+    ]
   },
   "repository": {
     "type": "git",

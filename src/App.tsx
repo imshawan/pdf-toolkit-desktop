@@ -13,8 +13,26 @@ function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [activeTool, setActiveTool] = useState<string | null>(null);
   
-  const { theme, language } = useApp();
+  const { theme, language, setPendingOSFiles } = useApp();
   const { i18n } = useTranslation();
+
+  
+  // Listen for OS File Opens (e.g. Right Click -> Open With)
+  useEffect(() => {
+    if (window.ipcRenderer) {
+      const handleOpenFiles = (_event: any, files: string[]) => {
+        setPendingOSFiles(files);
+        // Force navigate to dashboard so user can pick a tool for these files
+        setActiveTool(null);
+        setActiveTab('dashboard');
+      };
+      
+      window.ipcRenderer.on('open-files', handleOpenFiles);
+      return () => {
+        window.ipcRenderer.off('open-files', handleOpenFiles);
+      };
+    }
+  }, [setPendingOSFiles]);
 
   // Sync Language
   useEffect(() => {

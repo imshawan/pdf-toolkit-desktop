@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, nativeTheme, Menu, MenuItemConstructorOptions } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import { savePdf, saveMultiplePdfs, selectSaveFile, selectFolder, savePdfExact, saveMultiplePdfsExact, htmlToPdf } from './ipc/app/handlers'
+import { savePdf, saveMultiplePdfs, selectSaveFile, selectFolder, savePdfExact, saveMultiplePdfsExact, htmlToPdf, readFileBuffer } from './ipc/app/handlers'
 import pkg from '../package.json'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -75,6 +75,7 @@ function setupIpcHandlers() {
   ipcMain.handle('file:save-pdf-exact', savePdfExact);
   ipcMain.handle('file:save-multiple-pdfs-exact', saveMultiplePdfsExact);
   ipcMain.handle('file:html-to-pdf', htmlToPdf);
+  ipcMain.handle('file:read-buffer', readFileBuffer);
 }
 
 function createWindow() {
@@ -299,9 +300,52 @@ function setupMenu(translations = currentMenuTranslations) {
 ipcMain.on("set-menu-translations", (_event, translations) => {
   setupMenu(translations);
 });
+
+const gotTheLock = app.requestSingleInstanceLock();
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    if (win) {
+      if (win.isMinimized()) win.restore();
+      win.focus();
+      
+      const files = commandLine.filter(arg => !arg.startsWith('--') && arg !== process.execPath && arg !== '.');
+      if (files.length > 0) {
+        win.webContents.send('open-files', files);
+      }
+    }
+  });
+  
+  app.on('open-file', (event, path) => {
+    event.preventDefault();
+    if (win) {
+      win.webContents.send('open-files', [path]);
+    } else {
+      app.once('browser-window-created', (e, window) => {
+        window.webContents.once('did-finish-load', () => {
+          window.webContents.send('open-files', [path]);
+        });
+      });
+    }
+  });
+}
+
 app.whenReady().then(() => {
   setupMenu();
   setupIpcHandlers();
+
   createWindow();
+  
+  // Send startup files if opened via "Open With" on Windows/Linux
+  win?.webContents.once('did-finish-load', () => {
+    if (process.platform !== 'darwin') {
+      const files = process.argv.filter(arg => !arg.startsWith('--') && arg !== process.execPath && arg !== '.');
+      if (files.length > 0 && win) {
+        win.webContents.send('open-files', files);
+      }
+    }
+  });
+
 })
 

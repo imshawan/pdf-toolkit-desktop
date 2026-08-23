@@ -26,9 +26,62 @@ interface ToolWorkspaceProps {
 
 export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
   const { t } = useTranslation();
-  const { setSidebarHidden } = useApp();
+  const { setSidebarHidden, pendingOSFiles, clearPendingOSFiles } = useApp();
   const [files, setFiles] = useState<File[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Auto-load files passed from OS (e.g. Right Click -> Open With)
+  useEffect(() => {
+    if (pendingOSFiles.length > 0) {
+      const loadFiles = async () => {
+        try {
+          const loadedFiles: File[] = [];
+          for (const filePath of pendingOSFiles) {
+            // Request the raw buffer from the main process
+            const buffer = await window.ipcRenderer.invoke('file:read-buffer', filePath);
+            
+            // Extract filename from path (works for both Windows \ and POSIX /)
+            const fileName = filePath.split(/[\\/]/).pop() || 'document.pdf';
+            
+            // Guess mime type based on extension
+            const ext = fileName.split('.').pop()?.toLowerCase() || '';
+            let mimeType = 'application/pdf';
+            if (['png', 'jpg', 'jpeg'].includes(ext)) mimeType = 'image/' + ext;
+            if (ext === 'html') mimeType = 'text/html';
+            if (['xls', 'xlsx'].includes(ext)) mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+            
+            
+            // Validation: Only allow valid files for the selected tool
+            let isValid = false;
+            if (toolId === 'img2pdf' && mimeType.startsWith('image/')) isValid = true;
+            else if (toolId === 'xls2pdf' && ext && ['xls', 'xlsx'].includes(ext)) isValid = true;
+            else if (toolId === 'html2pdf' && ext && ['html', 'htm'].includes(ext)) isValid = true;
+            else if (toolId !== 'img2pdf' && toolId !== 'xls2pdf' && toolId !== 'html2pdf' && ext === 'pdf') isValid = true;
+            
+            if (isValid) {
+              const file = new File([buffer], fileName, { type: mimeType });
+              loadedFiles.push(file);
+            } else {
+              console.warn(`Skipped invalid file ${fileName} for tool ${toolId}`);
+            }
+
+          }
+          
+          if (loadedFiles.length > 0) {
+            setFiles(prev => [...prev, ...loadedFiles]);
+          }
+        } catch (error) {
+          console.error("Failed to load OS files:", error);
+        } finally {
+          // Clear the pending state so we don't reload them again
+          clearPendingOSFiles();
+        }
+      };
+      
+      loadFiles();
+    }
+  }, [pendingOSFiles, clearPendingOSFiles]);
+
 
   // Sync sidebar visibility with file selection
   useEffect(() => {
@@ -177,7 +230,7 @@ export function ToolWorkspace({ toolId, onBack }: ToolWorkspaceProps) {
             >
             <DropZone 
               onFilesDrop={handleFilesDrop} 
-              accept={toolId === 'img2pdf' ? 'image/*' : toolId === 'xls2pdf' ? '.xls,.xlsx' : '.pdf'} 
+              accept={toolId === 'img2pdf' ? 'image/*' : toolId === 'xls2pdf' ? '.xls,.xlsx' : toolId === 'html2pdf' ? '.html,.htm' : '.pdf'} 
               multiple={toolId === 'merge' || toolId === 'img2pdf'}
             />
             </motion.div>
