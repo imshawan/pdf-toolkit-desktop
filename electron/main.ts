@@ -91,10 +91,13 @@ function createWindow() {
       visualEffectState: 'active',
       backgroundColor: '#00000000',
       transparent: true,
-    } : {
+    } : isWin ? {
       autoHideMenuBar: true,
       titleBarStyle: 'hidden',
-      titleBarOverlay: isWin ? getTitleBarOverlayOptions() : false,
+      titleBarOverlay: getTitleBarOverlayOptions(),
+      backgroundColor: getWindowBackgroundColor(),
+    } : {
+      autoHideMenuBar: true,
       backgroundColor: getWindowBackgroundColor(),
     }),
     icon: path.join(process.env.VITE_PUBLIC, 'pdf-icon.png'),
