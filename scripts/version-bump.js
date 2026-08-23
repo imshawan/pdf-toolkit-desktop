@@ -52,7 +52,11 @@ try {
       execSync(`git tag -a ${tagVersion} -m "Release ${tagVersion}"`);
       console.log(`\x1b[32mSuccessfully created git tag: \x1b[33m${tagVersion}\x1b[0m`);
       
-      console.log(`\n\x1b[36mNext steps:\x1b[0m Run \x1b[33mgit push --follow-tags\x1b[0m to push the commit and release tag to the remote.`);
+      // Push commit and tag to remote origin
+      console.log('\x1b[36mPushing commit and tag to origin...\x1b[0m');
+      execSync('git push origin HEAD', { stdio: 'inherit' });
+      execSync(`git push origin ${tagVersion}`, { stdio: 'inherit' });
+      console.log('\x1b[32mSuccessfully pushed to origin.\x1b[0m');
     } catch (e) {
       console.error('\x1b[31mFailed to commit or tag changes in git.\x1b[0m');
       console.error(e.message);
